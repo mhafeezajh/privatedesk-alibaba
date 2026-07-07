@@ -17,7 +17,7 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 
 ## 1. Code repository (public + OSS license)
 
-- **Repository URL:** ⟨PUBLIC_GITHUB_URL⟩
+- **Repository URL:** https://github.com/mhafeezajh/privatedesk-alibaba
 - **License:** MIT — [`LICENSE`](../LICENSE) at repo root (detectable by GitHub; shows in the
   **About** panel automatically once pushed).
 - The repo contains **all** source (api, web), IaC (`infra/terraform`), assets (`docs/`), and
@@ -124,7 +124,7 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 
 ## Submission checklist
 
-- [ ] **Public repo** URL with **MIT** license visible in About — ⟨PUBLIC_GITHUB_URL⟩
+- [ ] **Public repo** URL with **MIT** license visible in About — https://github.com/mhafeezajh/privatedesk-alibaba
 - [ ] **Text description** — §2 above (paste into the form)
 - [ ] **Architecture diagram** — `docs/architecture.png` attached / linked
 - [ ] **Alibaba Cloud proof — code file link** — `api/app/llm/client.py` (+ `infra/terraform/`)
