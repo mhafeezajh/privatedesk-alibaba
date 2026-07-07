@@ -1,0 +1,18 @@
+# Terraform state (contains secrets) and local artifacts — never commit.
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Real variable files and rendered secrets
+terraform.tfvars
+*.auto.tfvars
+
+# Local credential files — sourced at runtime, NEVER committed
+.secrets.env
+*.secrets.env
+
+# Generated SSH key + packaged source
+generated/
+build/

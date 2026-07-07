@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 855" font-family="'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowSm" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1240" height="855" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="620" y="40" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">PrivateDesk MemoryAgent — Architecture</text>
+  <text x="620" y="64" text-anchor="middle" font-size="14" fill="#64748b">Per-principal private memory · provable isolation · one codebase, two deployments (Qwen Cloud ↔ local open weights)</text>
+
+  <!-- ===== Frontend ===== -->
+  <rect x="120" y="86" width="1000" height="92" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="138" y="108" font-size="12" font-weight="700" letter-spacing="1" fill="#475569">NEXT.JS FRONTEND · TYPESCRIPT</text>
+  <rect x="150" y="118" width="430" height="46" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="365" y="140" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">Chat UI + member switcher</text>
+  <text x="365" y="156" text-anchor="middle" font-size="11" fill="#64748b">streaming replies · approve/reject cards</text>
+  <rect x="600" y="118" width="500" height="46" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="850" y="140" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">Inspector panel</text>
+  <text x="850" y="156" text-anchor="middle" font-size="11" fill="#64748b">memory store · recall trace · audit · side-by-side isolation view</text>
+
+  <!-- arrow frontend -> backend -->
+  <line x1="620" y1="178" x2="620" y2="212" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="632" y="200" font-size="11" fill="#64748b">HTTPS / SSE</text>
+
+  <!-- ===== Backend ===== -->
+  <rect x="120" y="214" width="1000" height="190" rx="12" fill="#eef2ff" stroke="#6366f1"/>
+  <text x="138" y="236" font-size="12" font-weight="700" letter-spacing="1" fill="#4338ca">FASTAPI BACKEND · PYTHON 3.12 (ASYNC)</text>
+
+  <!-- component row -->
+  <rect x="150" y="248" width="220" height="56" rx="8" fill="#ffffff" stroke="#c7d2fe"/>
+  <text x="260" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#1e293b">Session / Auth</text>
+  <text x="260" y="288" text-anchor="middle" font-size="10.5" fill="#64748b">Redis-backed sessions</text>
+
+  <rect x="390" y="248" width="220" height="56" rx="8" fill="#ffffff" stroke="#c7d2fe"/>
+  <text x="500" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#1e293b">Chat orchestration</text>
+  <text x="500" y="288" text-anchor="middle" font-size="10.5" fill="#64748b">recall → compose → stream → write</text>
+
+  <rect x="630" y="248" width="220" height="56" rx="8" fill="#ffffff" stroke="#6366f1" stroke-width="2"/>
+  <text x="740" y="270" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">Memory engine</text>
+  <text x="740" y="288" text-anchor="middle" font-size="10.5" fill="#64748b">write · read · forget</text>
+
+  <rect x="870" y="248" width="220" height="56" rx="8" fill="#ffffff" stroke="#c7d2fe"/>
+  <text x="980" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#1e293b">HITL gate</text>
+  <text x="980" y="288" text-anchor="middle" font-size="10.5" fill="#64748b">propose → human approves</text>
+
+  <!-- isolation chokepoint band -->
+  <rect x="150" y="320" width="940" height="60" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+  <text x="620" y="345" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">ISOLATION CHOKEPOINT  ·  sole vector accessor</text>
+  <text x="620" y="365" text-anchor="middle" font-size="11.5" fill="#92400e">the only module that reads vectors — every query is scoped to one principal&#39;s namespace (guard test proves the wall holds)</text>
+
+  <!-- arrows backend -> lower layers -->
+  <line x1="360" y1="404" x2="360" y2="448" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="250" y="430" font-size="11" fill="#64748b">extract · embed · reason</text>
+  <line x1="885" y1="404" x2="885" y2="448" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrowAmber)"/>
+  <text x="900" y="430" font-size="11" font-weight="600" fill="#b45309">namespace-scoped vectors · rows · sessions</text>
+
+  <!-- ===== Model access (left) ===== -->
+  <rect x="120" y="450" width="470" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="138" y="472" font-size="12" font-weight="700" letter-spacing="1" fill="#475569">MODEL ACCESS · LiteLLM (single seam)</text>
+
+  <rect x="150" y="484" width="410" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="355" y="511" text-anchor="middle" font-size="13" font-weight="600" fill="#1e293b">LiteLLM router  ·  _clean_model() · retry/backoff</text>
+
+  <line x1="280" y1="528" x2="280" y2="548" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowSm)"/>
+  <line x1="430" y1="528" x2="430" y2="636" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowSm)"/>
+
+  <rect x="150" y="550" width="410" height="70" rx="8" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2"/>
+  <text x="166" y="572" font-size="13" font-weight="700" fill="#0369a1">Qwen Cloud · DashScope</text>
+  <text x="544" y="572" text-anchor="end" font-size="10" font-weight="700" fill="#0369a1">PRIMARY</text>
+  <text x="166" y="592" font-size="11" fill="#0c4a6e">qwen-plus · qwen3-max</text>
+  <text x="166" y="609" font-size="11" fill="#0c4a6e">text-embedding-v4 (1024-d)</text>
+
+  <rect x="150" y="636" width="410" height="58" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-dasharray="5 4"/>
+  <text x="166" y="658" font-size="13" font-weight="700" fill="#475569">Ollama · local open weights</text>
+  <text x="544" y="658" text-anchor="end" font-size="10" font-weight="700" fill="#475569">LOCAL ALT</text>
+  <text x="166" y="678" font-size="11" fill="#64748b">qwen3:8b · nomic-embed-text</text>
+
+  <rect x="150" y="704" width="410" height="32" rx="16" fill="#1e293b"/>
+  <text x="355" y="724" text-anchor="middle" font-size="11" font-weight="600" fill="#ffffff">DASHSCOPE_API_KEY set → Cloud   ·   empty → Local</text>
+
+  <!-- ===== Persistence (right) ===== -->
+  <rect x="650" y="450" width="470" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="668" y="472" font-size="12" font-weight="700" letter-spacing="1" fill="#475569">PERSISTENCE</text>
+
+  <rect x="680" y="484" width="410" height="74" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <text x="696" y="508" font-size="13" font-weight="700" fill="#0f766e">Qdrant — vector store</text>
+  <text x="696" y="528" font-size="11" fill="#115e59">per-principal namespaces / collections</text>
+  <text x="696" y="546" font-size="11" font-weight="600" fill="#0f766e">» the isolation unit</text>
+
+  <rect x="680" y="570" width="410" height="58" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="696" y="592" font-size="13" font-weight="700" fill="#1e293b">PostgreSQL 16</text>
+  <text x="696" y="612" font-size="11" fill="#64748b">identity · memories · audit log</text>
+
+  <rect x="680" y="640" width="410" height="52" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="696" y="662" font-size="13" font-weight="700" fill="#1e293b">Redis 7</text>
+  <text x="696" y="680" font-size="11" fill="#64748b">sessions · working-memory cache</text>
+
+  <text x="885" y="724" text-anchor="middle" font-size="11" fill="#94a3b8">all wired by Docker Compose · same stack cloud or local</text>
+
+  <!-- ===== Behaviors footer ===== -->
+  <text x="620" y="784" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="1.5" fill="#475569">TRACK 1 — MEMORY BEHAVIORS DEMONSTRATED</text>
+  <g font-size="12.5" font-weight="600" fill="#065f46">
+    <rect x="150" y="796" width="222" height="34" rx="17" fill="#ecfdf5" stroke="#10b981"/>
+    <text x="261" y="818" text-anchor="middle">Accumulation</text>
+    <rect x="396" y="796" width="222" height="34" rx="17" fill="#ecfdf5" stroke="#10b981"/>
+    <text x="507" y="818" text-anchor="middle">Isolation</text>
+    <rect x="642" y="796" width="222" height="34" rx="17" fill="#ecfdf5" stroke="#10b981"/>
+    <text x="753" y="818" text-anchor="middle">Forgetting</text>
+    <rect x="888" y="796" width="222" height="34" rx="17" fill="#ecfdf5" stroke="#10b981"/>
+    <text x="999" y="818" text-anchor="middle">Bounded recall</text>
+  </g>
+</svg>

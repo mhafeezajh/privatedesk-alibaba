@@ -1,0 +1,35 @@
+# ── Secrets — NEVER commit ───────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.secrets.env
+.secrets.env
+*.pem
+*.key
+# (infra/terraform/.gitignore also covers tfstate, generated keys, .secrets.env)
+
+# ── Terraform ────────────────────────────────────────────────────────────────
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# ── Node / Next.js ───────────────────────────────────────────────────────────
+node_modules/
+.next/
+npm-debug.log*
+yarn-error.log*
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# ── OS / editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

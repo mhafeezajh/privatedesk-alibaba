@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PrivateDesk — Deploy to Alibaba Cloud (Hackathon Runbook)</title>
+<style>
+  :root{
+    --ink:#1e293b; --mute:#64748b; --line:#e2e8f0;
+    --indigo:#4f46e5; --indigo-bg:#eef2ff;
+    --amber:#b45309; --amber-bg:#fffbeb; --amber-line:#fcd34d;
+    --teal:#0f766e; --teal-bg:#f0fdfa; --teal-line:#5eead4;
+    --rose:#b91c1c; --rose-bg:#fef2f2; --rose-line:#fecaca;
+    --ok:#059669;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);
+    background:radial-gradient(1100px 500px at 85% -10%, #eef2ff 0%, transparent 55%),#f8fafc;line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 120px}
+  header h1{font-size:26px;margin:0 0 4px}
+  header p{color:var(--mute);margin:0 0 18px;font-size:14px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:18px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+  .field input{border:1px solid #cbd5e1;border-radius:9px;padding:8px 10px;font:inherit;font-size:14px;min-width:200px}
+  .field input:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-bg)}
+  .progwrap{margin-left:auto;text-align:right;min-width:180px}
+  .progbar{height:10px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin-top:6px}
+  .progfill{height:100%;width:0;background:linear-gradient(90deg,#6366f1,#0ea5e9);transition:width .3s}
+  .progtxt{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+  .reset{margin-top:8px;font-size:12px;color:var(--mute);background:none;border:none;cursor:pointer;text-decoration:underline}
+  h2.phase{font-size:15px;letter-spacing:.02em;margin:26px 0 10px;display:flex;align-items:center;gap:10px}
+  h2.phase .pill{font-size:11px;font-weight:800;color:#fff;background:var(--indigo);border-radius:99px;padding:2px 9px}
+  h2.phase .pdone{background:var(--ok)}
+  .step{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+  .step:first-of-type{border-top:none}
+  .step input[type=checkbox]{margin-top:3px;width:18px;height:18px;accent-color:var(--indigo);cursor:pointer;flex:0 0 auto}
+  .step .body{flex:1;min-width:0}
+  .step .title{font-size:14.5px}
+  .step.checked .title{color:var(--mute);text-decoration:line-through}
+  .cmd{position:relative;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:11px 80px 11px 13px;margin:9px 0 2px;
+    font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:12.5px;white-space:pre-wrap;word-break:break-word}
+  .cmd .copy{position:absolute;top:8px;right:8px;background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:7px;
+    padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .cmd .copy:hover{background:#334155;color:#fff}
+  .cmd .copy.copied{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .note{border-radius:10px;padding:9px 12px;margin:9px 0 2px;font-size:13px}
+  .note.warn{background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber)}
+  .note.verify{background:var(--teal-bg);border:1px solid var(--teal-line);color:var(--teal)}
+  .note.info{background:var(--indigo-bg);border:1px solid #c7d2fe;color:#3730a3}
+  .note b{font-weight:800}
+  code.inline{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:5px;padding:1px 5px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px}
+  footer{color:var(--mute);font-size:12px;text-align:center;margin-top:30px}
+  a{color:var(--indigo)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Deploy PrivateDesk to Alibaba Cloud</h1>
+    <p>Step-by-step hackathon runbook · Qwen Cloud · Track 1. Check items off as you go — progress is saved in this browser.</p>
+  </header>
+
+  <div class="panel">
+    <div class="controls">
+      <div class="field">
+        <label for="ip">Your server public IP</label>
+        <input id="ip" placeholder="e.g. 47.84.x.x" />
+      </div>
+      <div class="field">
+        <label for="key">Your SSH key file</label>
+        <input id="key" placeholder="e.g. privatedesk.pem" />
+      </div>
+      <div class="progwrap">
+        <div class="progtxt"><span id="done">0</span> / <span id="total">0</span> steps</div>
+        <div class="progbar"><div class="progfill" id="fill"></div></div>
+        <button class="reset" id="reset">reset progress</button>
+      </div>
+    </div>
+    <div class="note info" style="margin-top:12px">
+      <b>Do this 2–3 days before the deadline, not on the last day.</b> The first build pulls images and compiles the web app — budget ~30–45 min end to end, plus time to record the proof clip.
+    </div>
+  </div>
+
+  <div id="phases"></div>
+
+  <footer>PrivateDesk MemoryAgent — deployment runbook. Replace placeholders with your own values; never commit your API key.</footer>
+</div>
+
+<script id="data" type="application/json">
+{
+ "phases":[
+  {"name":"Phase 0 — Before you start","steps":[
+    {"t":"Have an Alibaba Cloud account with a verified payment method (real-name / card). Pay-as-you-go is fine and easiest to release afterward."},
+    {"t":"Have the project ready to copy to the server — either pushed to a private GitHub repo, or the <code class='inline'>privatedesk-memoryagent.zip</code> on your laptop."},
+    {"t":"Have a terminal with SSH (macOS/Linux built-in; on Windows use PowerShell or WSL)."},
+    {"t":"Know your budget: a 4 vCPU / 16 GB instance running ~3 weeks until judging closes (through July 31) is not free-tier. Set a billing alert later."}
+  ]},
+
+  {"name":"Phase 1 — Get your Qwen Cloud (DashScope) API key","steps":[
+    {"t":"Open the Alibaba Cloud <b>Model Studio</b> console and, in the <b>upper-right region selector, choose Singapore</b>. Keys are region-specific — a Singapore key only works on the Singapore endpoint your app uses."},
+    {"t":"If prompted, accept the Model Studio Terms of Service to activate it."},
+    {"t":"Go to <b>API Key</b> → <b>Create API Key</b>. Workspace: default. Permission: All. Copy the <code class='inline'>sk-…</code> key now — it is shown once. Store it somewhere safe."},
+    {"t":"Sanity-check the key from your laptop (replace sk-YOURKEY). A normal JSON reply means it works.",
+      "cmd":["curl https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions -H 'Authorization: Bearer sk-YOURKEY' -H 'Content-Type: application/json' -d '{\"model\":\"qwen-plus\",\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}'"]},
+    {"t":"Note: the app already points at the Singapore endpoint <code class='inline'>https://dashscope-intl.aliyuncs.com/compatible-mode/v1</code> and uses <code class='inline'>qwen-plus</code>, <code class='inline'>qwen3-max</code>, and <code class='inline'>text-embedding-v4</code>. No code change needed.","note":{"type":"info","text":"To stay inside free quota, keep routine turns on <b>qwen-plus</b> (the app already does) and avoid hammering <b>qwen3-max</b>."}}
+  ]},
+
+  {"name":"Phase 2 — Provision the ECS instance","steps":[
+    {"t":"In the <b>ECS console</b>, set the region to <b>Singapore</b> (same region as your key, for lowest latency). Click <b>Create Instance</b>."},
+    {"t":"Billing method: <b>Pay-as-you-go</b> (so you can release it after judging)."},
+    {"t":"Instance type: at least <b>4 vCPU / 16 GB</b> RAM. The stack runs Postgres + Qdrant + Redis + API and builds the web image, so 16 GB avoids out-of-memory during the first build."},
+    {"t":"Image: <b>Ubuntu 24.04 64-bit</b>. System disk: <b>40 GB+ ESSD</b>."},
+    {"t":"Network: <b>Assign a public IPv4 address</b> (or bind an EIP). Bandwidth: pay-by-traffic, ~5 Mbps peak is plenty for a demo."},
+    {"t":"Logon credentials: create and <b>download a key pair</b> (recommended) or set a root password. Keep the .pem safe."},
+    {"t":"Launch the instance. When it’s Running, copy its <b>public IP</b> and paste it into the ‘server public IP’ box at the top of this page — every command below will fill it in for you."}
+  ]},
+
+  {"name":"Phase 3 — Open the firewall (security group)","steps":[
+    {"t":"ECS console → <b>Network &amp; Security → Security Groups</b> (same region). Open the security group attached to your instance → <b>Manage Rules → Inbound → Add Rule</b>. Security groups are stateful, so you only add inbound rules."},
+    {"t":"Add TCP <b>22 (SSH)</b> — set Source to <b>your own IP / 32</b> if you can, rather than 0.0.0.0/0, to reduce brute-force exposure."},
+    {"t":"Add TCP <b>8000</b> — Source <code class='inline'>0.0.0.0/0</code>. This is the API; the judge’s browser calls it directly."},
+    {"t":"Add TCP <b>3000</b> — Source <code class='inline'>0.0.0.0/0</code>. This is the web app the judges open.",
+      "note":{"type":"warn","text":"Do <b>not</b> open 5432 (Postgres), 6333 (Qdrant), or 6379 (Redis). They stay inside the Docker network — exposing them is a needless risk."}}
+  ]},
+
+  {"name":"Phase 4 — Connect and install Docker","steps":[
+    {"t":"SSH into the server (Alibaba’s Ubuntu image logs in as root).",
+      "cmd":["ssh -i KEYFILE root@PUBLIC_IP"]},
+    {"t":"Update the system.",
+      "cmd":["apt update && apt -y upgrade"]},
+    {"t":"Install Docker (the official script includes the Compose v2 plugin).",
+      "cmd":["curl -fsSL https://get.docker.com | sh"]},
+    {"t":"Confirm both Docker and Compose are present.",
+      "cmd":["docker --version && docker compose version"],
+      "note":{"type":"verify","text":"You should see a Docker version and a Compose v2 version. If <code class='inline'>docker compose</code> isn’t found, log out and back in, then retry."}}
+  ]},
+
+  {"name":"Phase 5 — Get the code onto the server","steps":[
+    {"t":"Option A — clone from GitHub (if you pushed the repo).",
+      "cmd":["git clone YOUR_REPO_URL privatedesk-memoryagent && cd privatedesk-memoryagent"]},
+    {"t":"Option B — copy the zip from your laptop. Run this <b>on your laptop</b>, not the server.",
+      "cmd":["scp -i KEYFILE privatedesk-memoryagent.zip root@PUBLIC_IP:/root/"]},
+    {"t":"Then, back <b>on the server</b>, unzip it and enter the folder.",
+      "cmd":["apt install -y unzip && unzip privatedesk-memoryagent.zip && cd privatedesk-memoryagent"]}
+  ]},
+
+  {"name":"Phase 6 — Configure the environment","steps":[
+    {"t":"Create your .env from the template.",
+      "cmd":["cp .env.example .env"]},
+    {"t":"Edit .env and paste your DashScope key. Leave the cloud LLM block as-is (it already targets the Singapore endpoint).",
+      "cmd":["nano .env    # set DASHSCOPE_API_KEY=sk-YOURKEY"]},
+    {"t":"Point the web app at the public IP. The frontend is called from the judge’s browser, so it must use the public IP — not localhost. Edit the web service build arg in docker-compose.yml.",
+      "cmd":["nano docker-compose.yml    # under web: build: args: set NEXT_PUBLIC_API_BASE: http://PUBLIC_IP:8000"],
+      "note":{"type":"warn","text":"<b>This is the #1 deployment gotcha.</b> If you leave it as <code class='inline'>http://localhost:8000</code>, the app loads but chat fails for everyone who isn’t on the server itself. Set it to <code class='inline'>http://PUBLIC_IP:8000</code>."}},
+    {"t":"Optional but recommended: make containers restart on reboot. Add <code class='inline'>restart: unless-stopped</code> to the api and web services in docker-compose.yml so a server reboot doesn’t take your demo offline."}
+  ]},
+
+  {"name":"Phase 7 — Launch","steps":[
+    {"t":"Build and start the whole stack in the background.",
+      "cmd":["docker compose up --build -d"]},
+    {"t":"Watch the API come up (first build takes a few minutes while images pull and the web app compiles).",
+      "cmd":["docker compose logs -f api"],
+      "note":{"type":"info","text":"Press Ctrl-C to stop following logs — the containers keep running."}}
+  ]},
+
+  {"name":"Phase 8 — Verify it works","steps":[
+    {"t":"Health check on the server — proves Qwen Cloud is reachable (one real completion + one real embedding).",
+      "cmd":["curl http://localhost:8000/health"],
+      "note":{"type":"verify","text":"Expect <code class='inline'>{\"provider\":\"Qwen Cloud (DashScope)\",\"llm_ok\":true,\"embedding_dim_live\":1024,...}</code>. If <code class='inline'>llm_ok</code> is false, your key is wrong or not a Singapore key."}},
+    {"t":"Health check from your laptop — proves the firewall is open.",
+      "cmd":["curl http://PUBLIC_IP:8000/health"]},
+    {"t":"Seed the demo (a firm + 3 matters incl. an adverse pair, with 110+ discovery memories on the litigation matter).",
+      "cmd":["curl -X POST http://PUBLIC_IP:8000/api/demo/seed -H 'content-type: application/json' -d '{\"scenario\":\"legal\"}'"],
+      "note":{"type":"verify","text":"The response lists three matters and a <code class='inline'>bulk_memories_created</code> count. Each matter's <code class='inline'>memory_namespace</code> should be an opaque <code class='inline'>ns_…</code> token, not a readable name."}},
+    {"t":"Run the isolation guard test inside the API container — your proof the wall holds.",
+      "cmd":["docker compose exec api pytest -q tests/test_isolation.py"]},
+    {"t":"Open the app in a browser and click <b>Seed demo</b>, then test chat, the recall trace, and the side-by-side isolation view.",
+      "cmd":["http://PUBLIC_IP:3000"]}
+  ]},
+
+  {"name":"Phase 9 — Capture proof + submit","steps":[
+    {"t":"Record a short screen clip showing: the ECS console with your <b>running instance and the Singapore region</b>, the app live at <code class='inline'>http://PUBLIC_IP:3000</code>, and <code class='inline'>/health</code> returning <code class='inline'>\"llm_ok\":true</code>. This is the proof-of-Alibaba-Cloud-deployment artifact."},
+    {"t":"Put the live URL (and any judge instructions) in your Devpost submission. Make sure it stays reachable through the judging window (July 31)."},
+    {"t":"Double-check the public repo has an OSI license and that <code class='inline'>litellm_config.yaml</code> is present as the Qwen Cloud proof artifact."}
+  ]},
+
+  {"name":"Phase 10 — Keep it alive & manage cost","steps":[
+    {"t":"Do <b>not</b> stop or release the instance until judging is over. Pay-as-you-go bills while it runs; a 4 vCPU / 16 GB instance for ~3 weeks plus light bandwidth is the main cost."},
+    {"t":"Set a <b>billing alert</b> in the Alibaba Cloud console so there are no surprises."},
+    {"t":"If you rebooted and added <code class='inline'>restart: unless-stopped</code>, the stack comes back automatically. If not, SSH in and run <code class='inline'>docker compose up -d</code> again."}
+  ]},
+
+  {"name":"Troubleshooting","steps":[
+    {"t":"<b>App loads but chat fails (for judges, not for you).</b> The web build arg still points at localhost. Fix NEXT_PUBLIC_API_BASE to the public IP and rebuild just the web image.",
+      "cmd":["docker compose up -d --build web"]},
+    {"t":"<b>/health shows llm_ok:false.</b> Wrong key, or a non-Singapore key, or a transient rate limit. Confirm the key region, then re-check.",
+      "cmd":["docker compose restart api && curl http://localhost:8000/health"]},
+    {"t":"<b>429 rate limits during the demo.</b> Keep routine turns on qwen-plus (default); the client already retries with backoff. Avoid repeatedly hitting qwen3-max."},
+    {"t":"<b>Port unreachable from your laptop.</b> The security group rule is missing or in the wrong region — re-check inbound TCP 8000 and 3000 from 0.0.0.0/0 in the same region as the instance."},
+    {"t":"<b>Out of memory during the first build.</b> The instance is too small. Use ≥16 GB, or build the web image on your laptop and push it, rather than building on a tiny server."},
+    {"t":"<b>See what’s running / restart everything.</b>",
+      "cmd":["docker compose ps","docker compose restart"]}
+  ]},
+
+  {"name":"Appendix — Teardown (after judging)","steps":[
+    {"t":"Stop the stack and remove volumes.",
+      "cmd":["docker compose down -v"]},
+    {"t":"In the ECS console, <b>Stop then Release</b> the instance to end billing, and release any EIP you bound."}
+  ]}
+ ]
+}
+</script>
+
+<script>
+(function(){
+  const data = JSON.parse(document.getElementById('data').textContent);
+  const phasesEl = document.getElementById('phases');
+  const KEY = 'pd-deploy-progress-v1';
+  const VARS = 'pd-deploy-vars-v1';
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ state = {}; }
+  let vars = { ip:'', key:'' };
+  try { vars = Object.assign(vars, JSON.parse(localStorage.getItem(VARS) || '{}')); } catch(e){}
+
+  const ipIn = document.getElementById('ip');
+  const keyIn = document.getElementById('key');
+  ipIn.value = vars.ip; keyIn.value = vars.key;
+
+  function sub(text){
+    const ip = vars.ip.trim() || 'PUBLIC_IP';
+    const kf = vars.key.trim() || 'KEYFILE';
+    return text.split('PUBLIC_IP').join(ip).split('KEYFILE').join(kf);
+  }
+
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  let idCounter = 0;
+  const stepEls = [];
+
+  data.phases.forEach((ph, pi)=>{
+    const h = document.createElement('h2');
+    h.className = 'phase';
+    h.innerHTML = '<span class="pill" data-pi="'+pi+'">'+'•'+'</span>' + ph.name;
+    phasesEl.appendChild(h);
+    const panel = document.createElement('div');
+    panel.className = 'panel';
+    ph.steps.forEach((st)=>{
+      const id = 'st'+(idCounter++);
+      const row = document.createElement('div');
+      row.className = 'step';
+      const cb = document.createElement('input');
+      cb.type='checkbox'; cb.id=id; cb.checked = !!state[id];
+      const body = document.createElement('div'); body.className='body';
+      const title = document.createElement('label');
+      title.className='title'; title.setAttribute('for',id);
+      title.innerHTML = st.t;
+      body.appendChild(title);
+
+      (st.cmd||[]).forEach(c=>{
+        const box = document.createElement('div'); box.className='cmd';
+        const codeText = document.createElement('span'); codeText.className='ctext';
+        codeText.textContent = sub(c); codeText.dataset.raw = c;
+        const btn = document.createElement('button'); btn.className='copy'; btn.textContent='Copy';
+        btn.onclick = ()=>{ const txt = sub(c);
+          navigator.clipboard?.writeText(txt).then(()=>{ btn.textContent='Copied'; btn.classList.add('copied');
+            setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},1200); })
+            .catch(()=>{ const r=document.createRange(); r.selectNode(codeText); getSelection().removeAllRanges(); getSelection().addRange(r); document.execCommand('copy'); }); };
+        box.appendChild(codeText); box.appendChild(btn); body.appendChild(box);
+      });
+
+      if(st.note){ const n=document.createElement('div'); n.className='note '+st.note.type; n.innerHTML=st.note.text; body.appendChild(n); }
+
+      row.appendChild(cb); row.appendChild(body); panel.appendChild(row);
+      if(cb.checked) row.classList.add('checked');
+      cb.addEventListener('change',()=>{ state[id]=cb.checked; row.classList.toggle('checked',cb.checked);
+        save(); refresh(); });
+      stepEls.push({cb,pi});
+    });
+    phasesEl.appendChild(panel);
+  });
+
+  const total = stepEls.length;
+  document.getElementById('total').textContent = total;
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  function saveVars(){ try{ localStorage.setItem(VARS, JSON.stringify(vars)); }catch(e){} }
+
+  function refresh(){
+    const done = stepEls.filter(s=>s.cb.checked).length;
+    document.getElementById('done').textContent = done;
+    document.getElementById('fill').style.width = (total? (done/total*100):0)+'%';
+    // per-phase done coloring
+    document.querySelectorAll('.pill').forEach(p=>{
+      const pi=+p.dataset.pi;
+      const inPhase = stepEls.filter(s=>s.pi===pi);
+      const allDone = inPhase.length && inPhase.every(s=>s.cb.checked);
+      p.classList.toggle('pdone', allDone);
+      p.textContent = allDone ? '✓' : '•';
+    });
+  }
+
+  function reapplyVars(){
+    document.querySelectorAll('.ctext').forEach(el=>{ el.textContent = sub(el.dataset.raw); });
+  }
+
+  ipIn.addEventListener('input',()=>{ vars.ip=ipIn.value; saveVars(); reapplyVars(); });
+  keyIn.addEventListener('input',()=>{ vars.key=keyIn.value; saveVars(); reapplyVars(); });
+  document.getElementById('reset').addEventListener('click',()=>{
+    if(!confirm('Clear all checkmarks?')) return;
+    state={}; save(); stepEls.forEach(s=>{s.cb.checked=false; s.cb.closest('.step').classList.remove('checked');}); refresh();
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>

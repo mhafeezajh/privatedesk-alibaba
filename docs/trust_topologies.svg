@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 770" font-family="'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1240" height="770" fill="#ffffff"/>
+  <text x="620" y="40" text-anchor="middle" font-size="25" font-weight="700" fill="#1e293b">Who is the principal? Two trust topologies</text>
+  <text x="620" y="64" text-anchor="middle" font-size="14" fill="#64748b">The family case and the legal case put the same wall in different places.</text>
+
+  <!-- ============ LEFT: FAMILY ============ -->
+  <rect x="40" y="92" width="560" height="560" rx="16" fill="#fbfcff" stroke="#c7d2fe"/>
+  <text x="64" y="122" font-size="13" font-weight="800" letter-spacing="1" fill="#3730a3">FAMILY — THE CONFIDER IS THE PRINCIPAL</text>
+
+  <rect x="140" y="140" width="360" height="50" rx="10" fill="#eef2ff" stroke="#6366f1"/>
+  <text x="320" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#3730a3">Maya — the child (a person)</text>
+
+  <line x1="320" y1="190" x2="320" y2="220" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="332" y="210" font-size="11" fill="#64748b">confides in</text>
+
+  <rect x="140" y="222" width="360" height="62" rx="10" fill="#ffffff" stroke="#6366f1"/>
+  <text x="320" y="248" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">Her tutor agent</text>
+  <text x="320" y="268" text-anchor="middle" font-size="11.5" fill="#64748b">Qwen + tutor persona + Maya's memories</text>
+
+  <line x1="320" y1="284" x2="320" y2="314" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="332" y="304" font-size="11" fill="#64748b">reads / writes</text>
+
+  <rect x="140" y="316" width="360" height="58" rx="10" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="320" y="341" text-anchor="middle" font-size="14" font-weight="700" fill="#0f766e">Maya's private namespace</text>
+  <text x="320" y="360" text-anchor="middle" font-size="11.5" fill="#115e59">the only place this lives</text>
+
+  <rect x="80" y="402" width="480" height="86" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="100" y="428" font-size="12.5" fill="#334155">Confider = principal = sole reader.</text>
+  <text x="100" y="450" font-size="12.5" fill="#334155">No other agent — not even a parent's — can read it.</text>
+  <text x="100" y="472" font-size="12.5" fill="#334155">1 person : 1 agent : 1 private store.</text>
+
+  <rect x="80" y="500" width="480" height="46" rx="10" fill="#eef2ff" stroke="#c7d2fe"/>
+  <text x="320" y="528" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">Trust: "this space is mine, and the wall keeps it mine."</text>
+
+  <rect x="80" y="562" width="480" height="74" rx="10" fill="#ecfdf5" stroke="#86efac"/>
+  <text x="100" y="586" font-size="11.5" font-weight="800" fill="#065f46">BUILT TODAY</text>
+  <text x="100" y="606" font-size="12" fill="#14532d">This is exactly what the current demo implements —</text>
+  <text x="100" y="624" font-size="12" fill="#14532d">one person, one private namespace (picker identity).</text>
+
+  <!-- ============ RIGHT: LEGAL ============ -->
+  <rect x="640" y="92" width="560" height="560" rx="16" fill="#fffdf7" stroke="#fcd34d"/>
+  <text x="664" y="122" font-size="13" font-weight="800" letter-spacing="1" fill="#b45309">LEGAL — THE MATTER IS THE PRINCIPAL</text>
+
+  <rect x="740" y="140" width="360" height="50" rx="10" fill="#fffbeb" stroke="#f59e0b"/>
+  <text x="920" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">Client A (a person)</text>
+
+  <line x1="920" y1="190" x2="920" y2="220" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="932" y="210" font-size="11" fill="#64748b">confides in</text>
+
+  <rect x="740" y="222" width="360" height="62" rx="10" fill="#ffffff" stroke="#f59e0b"/>
+  <text x="920" y="246" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">Authorized legal team</text>
+  <rect x="788" y="256" width="110" height="22" rx="11" fill="#fef3c7"/>
+  <text x="843" y="271" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">Lawyer 1</text>
+  <rect x="942" y="256" width="110" height="22" rx="11" fill="#fef3c7"/>
+  <text x="997" y="271" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">Lawyer 2</text>
+
+  <line x1="920" y1="284" x2="920" y2="314" stroke="#94a3b8" stroke-width="2" marker-end="url(#a)"/>
+  <text x="932" y="304" font-size="11" fill="#64748b">authorized access (shared)</text>
+
+  <rect x="740" y="316" width="360" height="58" rx="10" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="920" y="341" text-anchor="middle" font-size="14" font-weight="700" fill="#0f766e">Matter A — the principal</text>
+  <text x="920" y="360" text-anchor="middle" font-size="11.5" fill="#115e59">shared within the team, walled from others</text>
+
+  <!-- blocked adverse team -->
+  <rect x="740" y="388" width="360" height="38" rx="10" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="920" y="412" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">✗ Client B's team cannot reach Matter A (the ethical wall)</text>
+
+  <rect x="740" y="434" width="360" height="52" rx="10" fill="#eef2ff" stroke="#c7d2fe"/>
+  <text x="920" y="456" text-anchor="middle" font-size="12.5" font-weight="700" fill="#3730a3">Client A's view: their matter + the access log</text>
+  <text x="920" y="474" text-anchor="middle" font-size="11" fill="#475569">the audit is how the client verifies, not just trusts</text>
+
+  <rect x="680" y="500" width="480" height="46" rx="10" fill="#fffbeb" stroke="#fcd34d"/>
+  <text x="920" y="528" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">Trust: the firm proves it's walled + audited — the client verifies.</text>
+
+  <rect x="680" y="562" width="480" height="74" rx="10" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="700" y="586" font-size="11.5" font-weight="800" fill="#9a3412">THE EXTENSION (NOT BUILT YET)</text>
+  <text x="700" y="606" font-size="12" fill="#7c2d12">Same engine + same chokepoint, plus: team authorization,</text>
+  <text x="700" y="624" font-size="12" fill="#7c2d12">a client view, and real authentication. Access logic, not new memory.</text>
+
+  <text x="620" y="678" text-anchor="middle" font-size="12.5" fill="#64748b">The wall (namespace isolation, the chokepoint, the audit log) is identical. What changes is who counts as a principal and who is allowed to read it.</text>
+</svg>
