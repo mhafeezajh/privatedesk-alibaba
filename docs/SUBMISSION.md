@@ -74,9 +74,10 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 
 ## 3. Architecture diagram
 
-- **Primary image:** [`docs/architecture.png`](architecture.png) / [`architecture.svg`](architecture.svg)
-  — shows the browser → Next.js frontend → FastAPI backend → PostgreSQL / Qdrant / Redis, and
-  the LiteLLM seam out to **Qwen Cloud (DashScope)** or local Ollama.
+![PrivateDesk MemoryAgent architecture — Next.js frontend → FastAPI backend → PostgreSQL / Qdrant / Redis, with a LiteLLM seam to Qwen Cloud (DashScope) or local Ollama](architecture.png)
+
+*Browser → Next.js frontend → FastAPI backend → PostgreSQL / Qdrant / Redis, with the LiteLLM
+seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.svg`](architecture.svg).*
 - **Supporting flow diagrams:** [write path](flow_write_path.svg), [recall path](flow_recall_path.svg),
   [isolation](flow_isolation.svg), [forgetting](flow_forgetting.svg).
 - **Text + ASCII topology:** [`TECHNICAL-ARCHITECTURE.md`](TECHNICAL-ARCHITECTURE.md) §2.

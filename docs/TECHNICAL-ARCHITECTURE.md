@@ -18,6 +18,8 @@ Ollama** open-weight model, selected by a single environment variable.
 
 ## 2. System topology
 
+![PrivateDesk MemoryAgent architecture — Next.js frontend → FastAPI backend → PostgreSQL / Qdrant / Redis, with a LiteLLM seam to Qwen Cloud (DashScope) or local Ollama](architecture.png)
+
 ```
                           Browser
                              │  HTTP + SSE
