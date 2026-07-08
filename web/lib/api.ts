@@ -21,6 +21,18 @@ export type RecallTrace = {
 };
 
 export type AuditRow = { event_type: string; detail: Record<string, unknown>; created_at: string };
+
+export type GovReport = {
+  principal: { name: string; role: string; persona: string; namespace: string };
+  generated_at: string;
+  memories: { total: number; active: number; superseded: number; expired: number; by_kind: Record<string, number> };
+  audit: { total_events: number; by_type: Record<string, number> };
+  governance: {
+    isolation_blocks: number; memory_writes: number; memory_recalls: number;
+    maintenance_runs: number; hitl_approved: number; hitl_rejected: number; actions_pending: number;
+  };
+  attestation: { namespace_isolated: boolean; human_in_the_loop: boolean; statement: string };
+};
 export type PendingAction = { id: string; action_type: string; payload: Record<string, unknown> };
 
 async function j<T>(path: string, init?: RequestInit): Promise<T> {
@@ -38,6 +50,7 @@ export const api = {
   memories: (member_id: string) => j<MemoryRow[]>(`/api/inspector/memories?member_id=${member_id}`),
   audit: (member_id: string) => j<AuditRow[]>(`/api/inspector/audit?member_id=${member_id}`),
   maintenance: (member_id: string) => j<{ expired: number; pruned: number }>(`/api/inspector/maintenance?member_id=${member_id}`, { method: "POST" }),
+  report: (member_id: string) => j<GovReport>(`/api/inspector/report?member_id=${member_id}`),
   pending: (member_id: string) => j<PendingAction[]>(`/api/actions/pending?member_id=${member_id}`),
   approve: (id: string) => j(`/api/actions/${id}/approve`, { method: "POST" }),
   reject: (id: string) => j(`/api/actions/${id}/reject`, { method: "POST" }),

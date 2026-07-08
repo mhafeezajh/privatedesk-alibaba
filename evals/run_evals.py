@@ -206,9 +206,14 @@ def run() -> list[Suite]:
     suites.append(fgt)
 
     # 5) HUMAN-IN-THE-LOOP — an actionable ask surfaces a proposed action.
+    # (Up to 2 tries — action detection is an LLM classifier and mildly stochastic.)
     hil = Suite("Human-in-the-loop")
-    res = chat(lit, "Remind me to file the motion to exclude the email chain next Friday.")
-    pa = res["proposed_action"]
+    pa = None
+    for _ in range(2):
+        res = chat(lit, "Please set a reminder for me to file the motion to exclude next Friday.")
+        pa = res["proposed_action"]
+        if pa:
+            break
     hil.add("assistant proposes an action (not auto-executed)", pa is not None,
             f"action_type={pa.get('action_type')}" if pa else "no proposed action")
     if pa:

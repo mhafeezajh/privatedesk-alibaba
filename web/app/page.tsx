@@ -4,9 +4,10 @@ import { api, streamChat, type AuditRow, type Member, type MemoryRow, type Pendi
 import Chat from "@/components/Chat";
 import Inspector, { type Tab } from "@/components/Inspector";
 import IsolationView from "@/components/IsolationView";
+import GovernanceView from "@/components/GovernanceView";
 
 type Msg = { role: "user" | "assistant"; content: string };
-type RightView = Tab | "isolation";
+type RightView = Tab | "isolation" | "governance";
 
 export default function Page() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -93,6 +94,7 @@ export default function Page() {
     { id: "trace", label: "Recall trace" },
     { id: "audit", label: "Audit log" },
     { id: "isolation", label: "Ethical wall" },
+    { id: "governance", label: "Governance" },
   ];
 
   return (
@@ -166,6 +168,8 @@ export default function Page() {
           <div className="min-h-0 flex-1">
             {view === "isolation"
               ? <IsolationView members={members} />
+              : view === "governance"
+              ? <GovernanceView member={selected} />
               : <Inspector tab={view} memories={memories} trace={trace} audit={audit} onMaintenance={maintenance} maintenanceMsg={maintMsg} />}
           </div>
         </div>
