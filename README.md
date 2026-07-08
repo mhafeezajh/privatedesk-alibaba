@@ -62,7 +62,10 @@ On top of that partition sits a real **memory engine**:
 **Why it's powerful:** it's a memory *substrate*, not a legal app. Point it at any set of
 principals and you get private, persistent, governable memory for each — a law firm's matters
 today; tomorrow a hospital's patients, a bank's clients, a B2B SaaS's tenants, or a fleet of
-agents that must never cross-contaminate context.
+agents that must never cross-contaminate context. The demo ships **two scenarios** out of the
+box, selectable from the cockpit's seed picker — **legal matters** (the ethical wall) and
+**healthcare patients** (patient confidentiality) — running on the *identical* engine, chokepoint,
+and governance surface. Swapping domains is data, not code.
 
 ---
 

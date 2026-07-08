@@ -21,6 +21,7 @@ export default function Page() {
   const [audit, setAudit] = useState<AuditRow[]>([]);
   const [pending, setPending] = useState<PendingAction[]>([]);
   const [view, setView] = useState<RightView>("memory");
+  const [scenario, setScenario] = useState<"legal" | "healthcare">("legal");
   const [maintMsg, setMaintMsg] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
 
@@ -81,13 +82,13 @@ export default function Page() {
   const seed = useCallback(async () => {
     setBanner(null);
     try {
-      const r = await api.seed();
+      const r = await api.seed(scenario);
       await loadMembers();
-      setBanner(`Seeded ${r.members.length} principals · ${r.bulk_memories_created} memories for ${r.bulk_member}.`);
+      setBanner(`Seeded ${r.org} · ${r.members.length} principals · ${r.bulk_memories_created} memories.`);
       setSelected(null); setSessions({}); setThreads({}); setTrace(null);
       setMemories([]); setAudit([]); setPending([]);
     } catch { setBanner("Seed failed — check the API."); }
-  }, [loadMembers]);
+  }, [loadMembers, scenario]);
 
   const tabs: { id: RightView; label: string }[] = [
     { id: "memory", label: "Memory store" },
@@ -124,6 +125,11 @@ export default function Page() {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
+            <select value={scenario} onChange={(e) => setScenario(e.target.value as "legal" | "healthcare")}
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs font-medium text-slate-600">
+              <option value="legal">Legal — matters</option>
+              <option value="healthcare">Healthcare — patients</option>
+            </select>
             <button onClick={seed}
               className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
               Seed demo

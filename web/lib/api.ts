@@ -54,7 +54,7 @@ export const api = {
   pending: (member_id: string) => j<PendingAction[]>(`/api/actions/pending?member_id=${member_id}`),
   approve: (id: string) => j(`/api/actions/${id}/approve`, { method: "POST" }),
   reject: (id: string) => j(`/api/actions/${id}/reject`, { method: "POST" }),
-  seed: () => j<{ members: Member[]; bulk_member: string; bulk_memories_created: number }>("/api/demo/seed", { method: "POST", body: JSON.stringify({ scenario: "family" }) }),
+  seed: (scenario: string = "legal") => j<{ scenario: string; org: string; members: Member[]; bulk_member: string; bulk_memories_created: number }>("/api/demo/seed", { method: "POST", body: JSON.stringify({ scenario }) }),
 };
 
 export type ChatHandlers = {
