@@ -44,21 +44,29 @@ async def write_memories(db: AsyncSession, member, source_message_id, user_text:
         salience = float(c.get("salience", 0.5))
         vector = await embeddings.embed(content)
 
-        # dedup / supersession check against this member's existing memories
-        near = await vec.search(member.memory_namespace, vector, limit=3, active_only=True)
+        # dedup / supersession check against this member's existing memories.
+        # Scan the nearest neighbors above a lower floor and let the LLM classify the
+        # relationship three ways. This catches updates that reword a fact
+        # (e.g. "$4.2M ceiling" -> "raised to $5.0M"), which a high cosine cutoff misses,
+        # without wrongly merging merely-similar-but-distinct memories.
+        near = await vec.search(member.memory_namespace, vector, limit=12, active_only=True)
         superseded_old = None
         skip = False
         for cand in near:
-            if cand["score"] >= _s.dedup_threshold:
-                old = await db.get(Memory, cand["memory_id"])
-                if not old:
-                    continue
-                verdict = await client.complete_json(prompts.supersede_messages(old.content, content))
-                if isinstance(verdict, dict) and verdict.get("supersedes"):
-                    superseded_old = old
-                else:
-                    skip = True  # genuine duplicate, nothing new to store
+            if cand["score"] < _s.supersede_scan_floor:
+                break  # neighbors are score-sorted; nothing else is close enough
+            old = await db.get(Memory, cand["memory_id"])
+            if not old:
+                continue
+            verdict = await client.complete_json(prompts.supersede_messages(old.content, content))
+            relation = verdict.get("relation") if isinstance(verdict, dict) else None
+            if relation == "supersedes":
+                superseded_old = old
                 break
+            if relation == "duplicate":
+                skip = True  # nothing new to store
+                break
+            # "distinct" -> keep scanning remaining neighbors, then store as new
         if skip:
             continue
 

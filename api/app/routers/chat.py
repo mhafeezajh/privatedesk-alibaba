@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.audit import record
 from app.db import Memory, Message, ProposedAction, Session, SessionLocal, get_session
 from app.llm import client, prompts
 from app.memory import engine
@@ -87,6 +88,14 @@ async def chat(body: ChatIn, db: AsyncSession = Depends(get_session)):
             )).scalars().first()
             await engine.write_memories(bg, m2, last_msg.id if last_msg else None,
                                         body.message, history)
+
+            # governance: if the user asked for another context's data and the assistant
+            # declined, record it as an isolation_block — the ethical wall, audited.
+            guard = await client.complete_json(prompts.isolation_guard_messages(body.message, full))
+            if isinstance(guard, dict) and guard.get("cross_context_denied"):
+                await record(bg, member.id, "isolation_block",
+                             {"query": body.message[:200], "context": member.name})
+                await bg.commit()
 
             # human-in-the-loop: did the assistant propose an action?
             verdict = await client.complete_json(prompts.hitl_extract_messages(full))

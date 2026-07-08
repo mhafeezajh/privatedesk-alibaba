@@ -1,5 +1,7 @@
 # PrivateDesk MemoryAgent
 
+[![CI — isolation attestation & memory evals](https://github.com/mhafeezajh/privatedesk-alibaba/actions/workflows/ci.yml/badge.svg)](https://github.com/mhafeezajh/privatedesk-alibaba/actions/workflows/ci.yml) · **behavior evals: 100/100** (accumulation · isolation · forgetting · bounded recall · HITL)
+
 **A per-principal private memory layer for AI agents — where every principal gets its own
 persistent, isolated memory, and the wall between them is provable, not promised.**
 
@@ -163,6 +165,23 @@ docker compose exec api pytest -q tests/test_isolation.py     # -> 1 passed
 
 A query in one principal's memory never returns another's. Exported, this test is the
 **isolation attestation** — the artifact a security review can rely on.
+
+## Behavior evals — the four behaviors, quantified
+
+Beyond the pass/fail guard test, [`evals/run_evals.py`](evals/run_evals.py) scores every behavior
+end to end over the API and writes a [scorecard](evals/REPORT.md). It reseeds a known state,
+probes recall traces and answers, and **exits non-zero on any isolation leak** — so it gates CI.
+
+```bash
+EVAL_API_BASE=http://<host>:8000 python3 evals/run_evals.py
+```
+
+| Accumulation | Isolation 🔒 | Bounded recall | Forgetting | Human-in-the-loop |
+|:---:|:---:|:---:|:---:|:---:|
+| 100 | 100 | 100 | 100 | 100 |
+
+CI runs the isolation attestation on every push and the full evals on `main`
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ---
 

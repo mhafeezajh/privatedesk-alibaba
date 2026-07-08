@@ -36,6 +36,7 @@ class Settings:
     k_candidates: int
     k_context: int
     dedup_threshold: float
+    supersede_scan_floor: float
     salience_prune_floor: float
     w_sim: float
     w_sal: float
@@ -85,6 +86,7 @@ def get_settings() -> Settings:
         k_candidates=int(_b("K_CANDIDATES", "20")),
         k_context=int(_b("K_CONTEXT", "6")),
         dedup_threshold=float(_b("DEDUP_THRESHOLD", "0.92")),
+        supersede_scan_floor=float(_b("SUPERSEDE_SCAN_FLOOR", "0.60")),
         salience_prune_floor=float(_b("SALIENCE_PRUNE_FLOOR", "0.2")),
         w_sim=float(_b("RERANK_W_SIM", "0.6")),
         w_sal=float(_b("RERANK_W_SAL", "0.25")),

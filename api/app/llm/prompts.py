@@ -19,6 +19,9 @@ Return ONLY a JSON array (no prose, no code fences). Each item:
 Rules:
 - Extract only things worth remembering across sessions. Skip pleasantries and
   one-off chit-chat. If nothing is worth storing, return [].
+- Store only NEW information the user asserts. Do NOT store the user's questions,
+  requests, or what they want to know (e.g. "user asked about the settlement ceiling"
+  is NOT a memory). Only store the answer-worthy facts they state.
 - Prefer few high-quality memories over many trivial ones (max 4 per turn).
 - Never invent facts not present in the user's words."""
 
@@ -33,17 +36,36 @@ def extraction_messages(user_text: str, recent_context: str) -> list[dict]:
     ]
 
 
-SUPERSEDE_SYSTEM = """You decide whether a NEW memory makes an OLD memory obsolete.
-Return ONLY JSON: {"supersedes": true|false, "reason": "<short>"}.
-"supersedes" is true only if the new statement updates, contradicts, or replaces
-the old one (e.g. "allergic to peanuts" -> "outgrew peanut allergy"). If they
-simply coexist, return false."""
+SUPERSEDE_SYSTEM = """You classify the relationship between a NEW memory and an OLD one.
+Return ONLY JSON: {"relation": "supersedes"|"duplicate"|"distinct", "reason": "<short>"}.
+- "supersedes": the new statement updates, contradicts, or replaces the old about the
+  SAME subject/attribute (e.g. "settlement ceiling is $4.2M" -> "raised to $5.0M";
+  "allergic to peanuts" -> "outgrew peanut allergy"). The old becomes obsolete.
+- "duplicate": they state essentially the same thing; nothing new to store.
+- "distinct": different subjects/attributes; they should coexist.
+Prefer "supersedes" whenever the new memory changes the value of a fact the old one
+stated, even if the wording differs."""
 
 
 def supersede_messages(old_content: str, new_content: str) -> list[dict]:
     return [
         {"role": "system", "content": SUPERSEDE_SYSTEM},
         {"role": "user", "content": f"OLD: {old_content}\nNEW: {new_content}"},
+    ]
+
+
+ISOLATION_GUARD_SYSTEM = """An AI assistant operates strictly within ONE isolated context
+(one legal matter / client / principal) and must never reveal another context's information.
+Given the user's question and the assistant's reply, decide whether the user requested
+information belonging to a DIFFERENT context, which the assistant declined or said it had no
+access to. Return ONLY JSON: {"cross_context_denied": true|false}.
+true ONLY if the request was for another context's data AND the assistant did not provide it."""
+
+
+def isolation_guard_messages(user_text: str, assistant_text: str) -> list[dict]:
+    return [
+        {"role": "system", "content": ISOLATION_GUARD_SYSTEM},
+        {"role": "user", "content": f"USER: {user_text}\n\nASSISTANT: {assistant_text}"},
     ]
 
 

@@ -1,0 +1,76 @@
+name: CI — isolation attestation & memory evals
+
+# Proves the ethical wall holds and the four memory behaviors score, on every push.
+# Requires one repo secret: DASHSCOPE_API_KEY (Settings → Secrets → Actions).
+# The evals job is heavier (real LLM calls) so it runs on main + manual dispatch only.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  isolation-attestation:
+    name: Isolation attestation (the ethical wall)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write .env (cloud provider from secret)
+        run: echo "DASHSCOPE_API_KEY=${{ secrets.DASHSCOPE_API_KEY }}" > .env
+
+      - name: Start backend stack (postgres, qdrant, redis, api)
+        run: docker compose up -d --build postgres qdrant redis api
+
+      - name: Wait for API health (llm_ok)
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8000/health | grep -q '"llm_ok": *true'; then
+              echo "API healthy"; exit 0
+            fi
+            sleep 3
+          done
+          echo "API did not become healthy"; docker compose logs api; exit 1
+
+      - name: Run isolation guard test  🔒
+        run: docker compose exec -T api pytest -q tests/test_isolation.py
+
+      - name: Dump API logs on failure
+        if: failure()
+        run: docker compose logs api
+
+  memory-evals:
+    name: Memory behavior evals (quantified)
+    runs-on: ubuntu-latest
+    # Heavier (many LLM calls) — gate to main + manual runs to conserve quota.
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write .env (cloud provider from secret)
+        run: echo "DASHSCOPE_API_KEY=${{ secrets.DASHSCOPE_API_KEY }}" > .env
+
+      - name: Start backend stack
+        run: docker compose up -d --build postgres qdrant redis api
+
+      - name: Wait for API health
+        run: |
+          for i in $(seq 1 60); do
+            curl -fsS http://localhost:8000/health | grep -q '"llm_ok": *true' && exit 0
+            sleep 3
+          done
+          docker compose logs api; exit 1
+
+      - name: Run behavior evals (gates on isolation + overall score)
+        run: EVAL_API_BASE=http://localhost:8000 python3 evals/run_evals.py
+
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: evals/REPORT.md
+
+      - name: Dump API logs on failure
+        if: failure()
+        run: docker compose logs api
