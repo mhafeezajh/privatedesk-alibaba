@@ -24,22 +24,37 @@ from dataclasses import dataclass, field
 
 API = os.environ.get("EVAL_API_BASE", "http://localhost:8000").rstrip("/")
 TIMEOUT = 120
+TOKEN: str | None = None  # set by login(); demo role → full read access for the harness
+
+
+def _hdrs(extra: dict | None = None) -> dict:
+    h = dict(extra or {})
+    if TOKEN:
+        h["Authorization"] = f"Bearer {TOKEN}"
+    return h
 
 
 # ── tiny HTTP helpers (stdlib only, no deps) ─────────────────────────────────
 def _get(path: str):
-    with urllib.request.urlopen(f"{API}{path}", timeout=TIMEOUT) as r:
+    req = urllib.request.Request(f"{API}{path}", headers=_hdrs())
+    with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
         return json.loads(r.read().decode())
 
 
 def _post(path: str, body: dict | None = None):
     data = json.dumps(body or {}).encode()
     req = urllib.request.Request(
-        f"{API}{path}", data=data, headers={"content-type": "application/json"}, method="POST"
+        f"{API}{path}", data=data, headers=_hdrs({"content-type": "application/json"}), method="POST"
     )
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
         raw = r.read().decode()
         return json.loads(raw) if raw.strip() else {}
+
+
+def login_demo() -> None:
+    """Authenticate as the demonstration role (full read access) so evals work under auth."""
+    global TOKEN
+    TOKEN = _post("/api/auth/login", {"mode": "demo"})["token"]
 
 
 def chat(member_id: str, message: str) -> dict:
@@ -48,7 +63,7 @@ def chat(member_id: str, message: str) -> dict:
     sid = _post("/api/session/start", {"member_id": member_id})["session_id"]
     data = json.dumps({"session_id": sid, "message": message}).encode()
     req = urllib.request.Request(
-        f"{API}/api/chat", data=data, headers={"content-type": "application/json"}, method="POST"
+        f"{API}/api/chat", data=data, headers=_hdrs({"content-type": "application/json"}), method="POST"
     )
     answer, trace, action, event = [], None, None, "message"
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
@@ -122,6 +137,9 @@ def run() -> list[Suite]:
     if not health.get("llm_ok"):
         print("✗ Provider not healthy (llm_ok=false); aborting.", file=sys.stderr)
         sys.exit(2)
+
+    login_demo()
+    print("→ Authenticated as demo role.")
 
     print("→ Reseeding legal demo for a deterministic state…")
     seed = _post("/api/demo/seed", {"scenario": "legal"})

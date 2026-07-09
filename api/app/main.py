@@ -9,7 +9,7 @@ from app.config import describe, get_settings
 from app.db import init_db
 from app.llm import client
 from app.memory import embeddings
-from app.routers import actions, chat, demo, inspector, members
+from app.routers import actions, auth, chat, demo, inspector, members
 
 
 @asynccontextmanager
@@ -23,7 +23,7 @@ app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],
 )
 
-for r in (chat.router, members.router, inspector.router, actions.router, demo.router):
+for r in (auth.router, chat.router, members.router, inspector.router, actions.router, demo.router):
     app.include_router(r)
 
 

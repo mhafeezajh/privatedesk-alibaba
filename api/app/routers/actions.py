@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import auth
 from app.audit import record
 from app.db import ProposedAction, get_session
 
@@ -13,7 +14,9 @@ router = APIRouter(prefix="/api/actions", tags=["actions"])
 
 
 @router.get("/pending")
-async def pending(member_id: str, db: AsyncSession = Depends(get_session)):
+async def pending(member_id: str, db: AsyncSession = Depends(get_session),
+                  ident: dict = Depends(auth.require_identity)):
+    auth.authorize_content(ident, member_id)
     rows = (await db.execute(
         select(ProposedAction).where(
             ProposedAction.member_id == member_id, ProposedAction.status == "pending"
@@ -22,10 +25,11 @@ async def pending(member_id: str, db: AsyncSession = Depends(get_session)):
     return [{"id": str(a.id), "action_type": a.action_type, "payload": a.payload} for a in rows]
 
 
-async def _resolve(action_id: str, status: str, db: AsyncSession):
+async def _resolve(action_id: str, status: str, db: AsyncSession, ident: dict):
     a = await db.get(ProposedAction, action_id)
     if not a:
         raise HTTPException(404, "action not found")
+    auth.authorize_content(ident, str(a.member_id))
     a.status = status
     a.resolved_at = datetime.now(timezone.utc)
     await record(db, a.member_id, f"hitl_{status}", {"action_id": action_id, "action_type": a.action_type})
@@ -34,10 +38,12 @@ async def _resolve(action_id: str, status: str, db: AsyncSession):
 
 
 @router.post("/{action_id}/approve")
-async def approve(action_id: str, db: AsyncSession = Depends(get_session)):
-    return await _resolve(action_id, "approved", db)
+async def approve(action_id: str, db: AsyncSession = Depends(get_session),
+                  ident: dict = Depends(auth.require_identity)):
+    return await _resolve(action_id, "approved", db, ident)
 
 
 @router.post("/{action_id}/reject")
-async def reject(action_id: str, db: AsyncSession = Depends(get_session)):
-    return await _resolve(action_id, "rejected", db)
+async def reject(action_id: str, db: AsyncSession = Depends(get_session),
+                 ident: dict = Depends(auth.require_identity)):
+    return await _resolve(action_id, "rejected", db, ident)

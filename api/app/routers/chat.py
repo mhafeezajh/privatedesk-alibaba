@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import auth
 from app.audit import record
 from app.db import Memory, Message, ProposedAction, Session, SessionLocal, get_session
 from app.llm import client, prompts
@@ -28,7 +29,9 @@ class StartIn(BaseModel):
 
 
 @router.post("/session/start")
-async def start_session(body: StartIn, db: AsyncSession = Depends(get_session)):
+async def start_session(body: StartIn, db: AsyncSession = Depends(get_session),
+                        ident: dict = Depends(auth.require_identity)):
+    auth.authorize_content(ident, body.member_id)
     member = await require_member(body.member_id, db)
     s = Session(member_id=member.id)
     db.add(s)
@@ -46,8 +49,10 @@ async def _recent_context(db: AsyncSession, session_id: str, limit: int = 6) -> 
 
 
 @router.post("/chat")
-async def chat(body: ChatIn, db: AsyncSession = Depends(get_session)):
+async def chat(body: ChatIn, db: AsyncSession = Depends(get_session),
+               ident: dict = Depends(auth.require_identity)):
     sess = await db.get(Session, body.session_id)
+    auth.authorize_content(ident, str(sess.member_id))
     member = await require_member(str(sess.member_id), db)
     persona = get_persona(member.persona_key)
 
