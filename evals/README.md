@@ -30,8 +30,8 @@ EVAL_API_BASE=http://<host>:8000 python3 evals/run_evals.py
 No dependencies (stdlib only). Needs a healthy provider (`/health` → `llm_ok: true`); the harness
 reseeds the demo, so run it against a demo/test box, not production data.
 
-## In CI
+## Automating later (optional)
 
-[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs the isolation attestation on every
-push and these evals on `main` / manual dispatch, uploading `REPORT.md` as an artifact. Add a
-`DASHSCOPE_API_KEY` repo secret to enable it.
+The harness exits non-zero on any isolation leak or a low overall score, so it drops cleanly into
+CI when wanted: bring up `postgres qdrant redis api` (with a `DASHSCOPE_API_KEY` **secret**), wait
+for `/health` → `llm_ok:true`, then run `python3 evals/run_evals.py`. Not wired up right now.

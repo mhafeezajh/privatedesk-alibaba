@@ -1,6 +1,6 @@
 # PrivateDesk MemoryAgent
 
-[![CI — isolation attestation & memory evals](https://github.com/mhafeezajh/privatedesk-alibaba/actions/workflows/ci.yml/badge.svg)](https://github.com/mhafeezajh/privatedesk-alibaba/actions/workflows/ci.yml) · **behavior evals: 100/100** (accumulation · isolation · forgetting · bounded recall · HITL)
+**Behavior evals: 100/100** — accumulation · isolation · forgetting · bounded recall · HITL (see [`evals/`](evals/))
 
 **A per-principal private memory layer for AI agents — where every principal gets its own
 persistent, isolated memory, and the wall between them is provable, not promised.**
@@ -183,8 +183,8 @@ EVAL_API_BASE=http://<host>:8000 python3 evals/run_evals.py
 |:---:|:---:|:---:|:---:|:---:|
 | 100 | 100 | 100 | 100 | 100 |
 
-CI runs the isolation attestation on every push and the full evals on `main`
-([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+Run them against any deployment; the harness reseeds a known state and exits non-zero on any
+isolation leak. See [`evals/README.md`](evals/README.md).
 
 ---
 
