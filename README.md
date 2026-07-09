@@ -5,10 +5,17 @@
 **A per-principal private memory layer for AI agents — where every principal gets its own
 persistent, isolated memory, and the wall between them is provable, not promised.**
 
-The reference build is a **legal** scenario: a law firm running several **matters**, where the
-memory wall between matters *is* the profession's **ethical wall**. The same engine generalizes
-to any principal — a SaaS tenant, a patient, a client, an individual user, or an autonomous
-agent — each with a private memory no one else can reach.
+The demo ships **two built-in domains** on the *identical* engine — pick either at the login
+screen:
+
+| Domain | Each principal is a… | The wall is… | The confidential "needle" fact |
+|---|---|---|---|
+| ⚖️ **Legal** | **matter** (case) | the profession's **ethical wall** | Acme's **$4.2M** settlement ceiling |
+| 🏥 **Healthcare** | **patient** | **patient confidentiality** (HIPAA-style) | a patient's **HIV status** + medication |
+
+Same isolation chokepoint, same governance, same memory engine — swapping domains is **data, not
+code**. And it generalizes further: any principal — a SaaS tenant, a client, an individual user,
+or an autonomous agent — gets a private memory no one else can reach.
 
 Built for the **Qwen Cloud Global AI Hackathon, Track 1 (MemoryAgent)**. The exact same code
 runs on **Qwen Cloud (DashScope)** *or* fully local on **open-weight Qwen3 via Ollama** — because
@@ -59,13 +66,12 @@ On top of that partition sits a real **memory engine**:
   reranker injects only the top ~6 into the prompt, under a token budget.
 - **Human-in-the-loop** — the agent *drafts* actions; a human approves before anything is "done."
 
-**Why it's powerful:** it's a memory *substrate*, not a legal app. Point it at any set of
-principals and you get private, persistent, governable memory for each — a law firm's matters
-today; tomorrow a hospital's patients, a bank's clients, a B2B SaaS's tenants, or a fleet of
-agents that must never cross-contaminate context. The demo ships **two scenarios** out of the
-box, selectable from the cockpit's seed picker — **legal matters** (the ethical wall) and
-**healthcare patients** (patient confidentiality) — running on the *identical* engine, chokepoint,
-and governance surface. Swapping domains is data, not code.
+**Why it's powerful:** it's a memory *substrate*, not a single-industry app. The demo proves this
+by shipping **two domains** — **legal matters** and **healthcare patients** — you switch between at
+the login screen, running on the *identical* engine, chokepoint, and governance surface. The same
+wall that is a law firm's *ethical wall* is a clinic's *patient confidentiality*. Point it at any
+set of principals — a bank's clients, a B2B SaaS's tenants, a fleet of agents — and each gets a
+private memory no one else can reach. Swapping domains is **data, not code**.
 
 ---
 
@@ -129,8 +135,9 @@ DASHSCOPE_API_KEY empty  →  local Ollama / open-weight Qwen3
 ### Cloud path (Qwen Cloud / DashScope)
 ```bash
 cp .env.example .env            # set DASHSCOPE_API_KEY=sk-...  (Alibaba Cloud Model Studio; Free Quota is fine)
-make dev                        # build, wait for /health, seed the legal demo
-# open http://localhost:3000  ·  health: http://localhost:8000/health  (expect "llm_ok": true)
+make dev                        # build, wait for /health, seed the demo
+# open http://localhost:3000 → sign in; pick Legal or Healthcare at the login screen
+# health: http://localhost:8000/health  (expect "llm_ok": true)
 ```
 
 ### Local path (Ollama, open weights — no code changes)
@@ -194,7 +201,7 @@ isolation leak. See [`evals/README.md`](evals/README.md).
 |---|---|
 | `POST /api/session/start` | begin a session for a principal |
 | `POST /api/chat` | SSE chat: recall → compose → stream → async memory write → HITL detect |
-| `GET /api/members` | principal switcher (matters are the principals) |
+| `GET /api/members` | principal list (matters or patients, per the loaded domain) |
 | `GET /api/inspector/memories` | a principal's memory store (status + salience) |
 | `GET /api/inspector/audit` | audit log incl. `isolation_block` events |
 | `POST /api/inspector/maintenance` | run the forgetting sweep live |
@@ -226,11 +233,11 @@ docs/       architecture diagram + deep-dive docs (below)
 
 ## Honest state (no overclaiming)
 
-- **Identity is currently a picker, not authentication.** The wall *between* namespaces is
-  enforced and tested; binding a human to a principal (passkeys/SSO) is the first real-product
-  addition.
-- **Lean topology:** one matter = one namespace. Team access to a shared matter, a client-facing
-  view, and real auth are extensions on top of the same engine.
+- **Login is a *dummy* login** (no passwords) — but it's real, server-side auth: a signed token
+  binds a session to one principal, and the API returns **403** for any other principal (and
+  metadata-only for the supervisor role). Swapping in real passwordless/SSO is a drop-in on top.
+- **Lean topology:** one principal = one namespace. Team access to a shared principal and a
+  client-facing view are extensions on top of the same engine.
 - DB schema uses `create_all` for hackathon speed (swap for Alembic in prod); CORS is open for the
   demo (lock down for prod); Redis is provisioned for scale-out (sessions currently persist in PG).
 
