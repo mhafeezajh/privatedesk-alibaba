@@ -30,6 +30,10 @@ export default function Login({ onLogin }: { onLogin: (id: Identity) => void }) 
   };
 
   const domainLabel = scenario === "legal" ? "matters" : "patients";
+  // Legal principals are "matter"s, healthcare ones are "patient"s — show only the
+  // ones that belong to the selected domain (the other domain isn't seeded anyway).
+  const wantRole = scenario === "legal" ? "matter" : "patient";
+  const shown = members.filter((m) => m.role === wantRole);
 
   return (
     <main className="grid-bg flex min-h-screen items-center justify-center p-6">
@@ -56,21 +60,21 @@ export default function Login({ onLogin }: { onLogin: (id: Identity) => void }) 
           </div>
           <button onClick={seed} disabled={busy === "seed"}
             className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50">
-            {busy === "seed" ? "Seeding…" : members.length ? `Reseed ${domainLabel}` : `Load ${domainLabel} demo data`}
+            {busy === "seed" ? "Seeding…" : shown.length ? `Reseed ${domainLabel}` : `Load ${domainLabel} demo data`}
           </button>
         </div>
 
-        {members.length === 0 ? (
+        {shown.length === 0 ? (
           <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
-            Load the demo data above to choose an identity.
+            No {domainLabel} loaded yet — click “Load {domainLabel} demo data” above to choose an identity.
           </p>
         ) : (
           <>
             <div className="mb-1 mt-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-              Log in as a principal
+              Log in as a {scenario === "legal" ? "matter" : "patient"}
             </div>
             <div className="space-y-1.5">
-              {members.map((m) => (
+              {shown.map((m) => (
                 <button key={m.id} onClick={() => loginAs("principal", m.id)} disabled={!!busy}
                   className="flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-xs hover:border-indigo-300 disabled:opacity-50">
                   <span className="inline-block h-2 w-2 rounded-full bg-indigo-500" />
