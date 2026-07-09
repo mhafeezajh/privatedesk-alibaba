@@ -8,7 +8,9 @@ USER ?= root
 
 TF_DIR ?= infra/terraform
 
-.PHONY: help dev logs health seed test down deploy infra-plan infra-up infra-down infra-output
+API_BASE ?= http://localhost:8000
+
+.PHONY: help dev logs health seed test smoke evals down deploy infra-plan infra-up infra-down infra-output
 
 help:
 	@echo "make dev                                   build + run locally, wait for health, seed"
@@ -16,6 +18,8 @@ help:
 	@echo "make health                                print /health (JSON)"
 	@echo "make seed                                  seed the legal demo"
 	@echo "make test                                  run the isolation guard test"
+	@echo "make smoke [API_BASE=http://host:8000]     API smoke test (auth + both walls)"
+	@echo "make evals [API_BASE=http://host:8000]     score the four behaviors (100/100)"
 	@echo "make down                                  stop the stack"
 	@echo "make deploy IP=1.2.3.4 KEY=key.pem [USER=root]   deploy to an existing Ubuntu ECS box"
 	@echo "make infra-up                              provision Alibaba Cloud + deploy via Terraform (whole package)"
@@ -37,6 +41,12 @@ seed:
 
 test:
 	docker compose exec api pytest -q tests/test_isolation.py
+
+smoke:
+	API=$(API_BASE) bash scripts/smoke-test.sh
+
+evals:
+	EVAL_API_BASE=$(API_BASE) python3 evals/run_evals.py
 
 down:
 	docker compose down
