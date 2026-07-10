@@ -70,6 +70,21 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 
 *(Longer version: [`README.md`](../README.md). Deep dive: [`TECHNICAL-ARCHITECTURE.md`](TECHNICAL-ARCHITECTURE.md).)*
 
+### How is this different from AWS Bedrock / OpenAI / a DIY RAG stack?
+
+Different **layer**, and complementary — not a replacement. Bedrock/OpenAI are where models run;
+Pinecone is where vectors sit. PrivateDesk is the **isolation + memory + governance layer** that
+runs *on top of* any of them (swap one config line and it uses Claude on Bedrock, Qwen Cloud, or
+**fully local open-weight Qwen3**). The difference that matters: on those platforms, multi-tenant
+isolation is **your job on every query** — one missing metadata filter leaks. PrivateDesk makes
+the wall **structural and provable** (one namespace per principal → a single chokepoint → a guard
+test that fails the build if anything crosses), adds a real memory engine (accumulation /
+forgetting / bounded recall) and ethical-wall governance (audit, metadata-only oversight, HITL,
+attestation), and runs in **your own VPC or air-gapped** with no hyperscaler lock-in.
+
+→ Full competitive breakdown (vs. Bedrock, OpenAI Assistants/Memory, DIY Pinecone+LangChain,
+Mem0/Zep), with a comparison matrix and Q&A talking points: [`POSITIONING.md`](POSITIONING.md).
+
 ---
 
 ## 3. Architecture diagram
