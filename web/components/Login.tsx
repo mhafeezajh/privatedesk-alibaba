@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { api, storeIdentity, type Identity, type Member, type Role } from "@/lib/api";
+import Logo from "@/components/Logo";
 
 export default function Login({ onLogin }: { onLogin: (id: Identity) => void }) {
   const [scenario, setScenario] = useState<"legal" | "healthcare">("legal");
@@ -38,8 +39,8 @@ export default function Login({ onLogin }: { onLogin: (id: Identity) => void }) 
   return (
     <main className="grid-bg flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-sm backdrop-blur">
-        <div className="mb-4 flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-xs font-bold text-white">PD</span>
+        <div className="mb-4 flex items-center gap-2.5">
+          <Logo size={40} />
           <div>
             <h1 className="text-sm font-bold text-slate-800">PrivateDesk MemoryAgent</h1>
             <p className="text-[11px] text-slate-500">sign in to a private, isolated memory</p>

@@ -7,6 +7,7 @@ import IsolationView from "@/components/IsolationView";
 import GovernanceView from "@/components/GovernanceView";
 import Login from "@/components/Login";
 import SupervisorDashboard from "@/components/SupervisorDashboard";
+import Logo from "@/components/Logo";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type RightView = Tab | "isolation" | "governance";
@@ -22,10 +23,10 @@ function Header({ identity, onLogout, children }: { identity: Identity; onLogout
     <header className="border-b border-slate-200 bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-3 px-5 py-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-xs font-bold text-white">PD</span>
+          <Logo size={30} />
           <div>
             <h1 className="text-sm font-bold leading-tight text-slate-800">PrivateDesk MemoryAgent</h1>
-            <p className="text-[11px] leading-tight text-slate-500">matter-isolated memory · the wall, enforced</p>
+            <p className="text-[11px] leading-tight text-slate-500">per-principal isolated memory · the wall, enforced</p>
           </div>
         </div>
         {children}

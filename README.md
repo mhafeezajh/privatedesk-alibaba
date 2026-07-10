@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" alt="PrivateDesk" width="84" height="84">
+</p>
+
 # PrivateDesk MemoryAgent
 
 **Behavior evals: 100/100** — accumulation · isolation · forgetting · bounded recall · HITL (see [`evals/`](evals/))
