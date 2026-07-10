@@ -230,6 +230,7 @@ docs/       architecture diagram + deep-dive docs (below)
 | [`docs/DEMO-WALKTHROUGH.md`](docs/DEMO-WALKTHROUGH.md) | Click-by-click demo of all five behaviors (login-first flow) |
 | [`docs/TEST-CASES.md`](docs/TEST-CASES.md) | Full test plan — automated (`make smoke` / `make evals` / pytest) + manual UI cases |
 | [`docs/FUNCTIONAL-TEST-CASES.md`](docs/FUNCTIONAL-TEST-CASES.md) | Plain-English UAT for business users — no jargon, click-by-click, with a results sheet |
+| [`docs/POSITIONING.md`](docs/POSITIONING.md) | How PrivateDesk differs from Bedrock / OpenAI / DIY / Mem0-Zep — talking points & FAQ |
 | [`docs/SUBMISSION.md`](docs/SUBMISSION.md) | Hackathon submission packet |
 | [`DEPLOY.md`](DEPLOY.md) | Local + Alibaba Cloud deployment |
 
