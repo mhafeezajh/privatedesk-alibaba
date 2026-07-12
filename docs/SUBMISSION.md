@@ -48,7 +48,9 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 > - **Isolation** — each matter has an opaque, server-minted namespace. All vector retrieval
 >   flows through a single chokepoint that is *always* namespace-scoped, so one matter's
 >   assistant physically cannot read another's memory. Attempts are logged as `isolation_block`
->   and covered by an automated guard test.
+>   and covered by an automated guard test. Isolation extends even to the **LLM prompt cache** —
+>   partitioned per principal so a shared provider cache can't become a cross-matter timing
+>   side-channel (see [`CACHE-ISOLATION.md`](CACHE-ISOLATION.md)).
 > - **Forgetting** — superseding facts are auto-detected and the old ones retired; an expiry +
 >   low-salience sweep prunes stale memory on demand.
 > - **Bounded recall** — with 115 memories on one matter, a similarity + salience + recency

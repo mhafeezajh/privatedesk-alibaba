@@ -81,7 +81,7 @@ private memory no one else can reach. Swapping domains is **data, not code**.
 
 ## How PrivateDesk achieves privacy
 
-Four pillars, each enforced in code (not just prompts):
+Five pillars, each enforced in code (not just prompts):
 
 | Pillar | How |
 |---|---|
@@ -89,6 +89,7 @@ Four pillars, each enforced in code (not just prompts):
 | **2. Open weights** | The same code runs on open-weight **Qwen3** with **zero** external calls — the model, the vectors, the database all inside your boundary. Privacy that doesn't depend on trusting a vendor. |
 | **3. Never trained on** | Memories live in *your* Postgres/Qdrant. Nothing is sent for training. On the cloud path, inference uses DashScope's API (no training on inputs); on the local path, nothing leaves the box at all. |
 | **4. Data minimization** | Namespaces are opaque tokens generated server-side and never client-supplied, so they can't be spoofed and leak nothing if inspected. Human-readable labels are stored separately from the isolation key. |
+| **5. Cache isolation** | Even the **LLM prompt cache** is walled: a shared provider cache is a cross-principal *timing* side-channel, so we **partition it per principal** (an unguessable per-namespace cache token) rather than crudely disabling it — isolation **and** cost/latency. [`CACHE-ISOLATION.md`](docs/CACHE-ISOLATION.md). |
 
 **Server-side namespace resolution** means a client never chooses whose memory it reads — the
 backend derives it from the authenticated principal record on every request.
