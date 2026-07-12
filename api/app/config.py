@@ -46,6 +46,7 @@ class Settings:
     # app
     session_secret: str
     app_env: str
+    prompt_cache_mode: str  # "partitioned" | "off" | "shared"
 
     @property
     def provider_label(self) -> str:
@@ -94,6 +95,7 @@ def get_settings() -> Settings:
         isolation_mode=_b("ISOLATION_MODE", "collection_per_member"),
         session_secret=_b("SESSION_SECRET", "change-me-in-prod"),
         app_env=_b("APP_ENV", "dev"),
+        prompt_cache_mode=_b("PROMPT_CACHE_MODE", "partitioned"),
     )
 
 
@@ -109,4 +111,5 @@ def describe() -> dict:
         "isolation_mode": s.isolation_mode,
         "k_candidates": s.k_candidates,
         "k_context": s.k_context,
+        "prompt_cache_mode": s.prompt_cache_mode,
     }

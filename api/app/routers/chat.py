@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import auth
 from app.audit import record
 from app.db import Memory, Message, ProposedAction, Session, SessionLocal, get_session
-from app.llm import client, prompts
+from app.llm import cache_isolation, client, prompts
 from app.memory import engine
 from app.personas import get_persona
 from app.routers.members import require_member
@@ -65,6 +65,9 @@ async def chat(body: ChatIn, db: AsyncSession = Depends(get_session),
     system_prompt = prompts.compose_system_prompt(
         persona["system_prompt"], member.name, member.role, recalled["memories"]
     )
+    # Partition the LLM prompt-cache by principal so a shared provider cache can't become a
+    # cross-principal timing side-channel (see llm/cache_isolation.py).
+    system_prompt = cache_isolation.with_boundary(system_prompt, member.memory_namespace)
     history = await _recent_context(db, str(sess.id))
     messages = [
         {"role": "system", "content": system_prompt},

@@ -37,6 +37,10 @@ answers one question those tools leave to you:
    approval, a **metadata-only oversight role** (compliance confirms the walls hold without
    seeing through them), human-in-the-loop, and a downloadable attestation.
 
+*Depth signal:* we even isolate the **LLM prompt cache** — a shared surface most memory products
+miss — by partitioning it per principal (not crudely disabling it), closing a cross-principal
+timing side-channel. See [`CACHE-ISOLATION.md`](CACHE-ISOLATION.md).
+
 ---
 
 ## At a glance
