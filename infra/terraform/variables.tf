@@ -24,9 +24,11 @@ variable "dashscope_api_key" {
 variable "instance_type" {
   description = "ECS instance type. Default ~4 vCPU / 16 GB, enough for the full compose stack."
   type        = string
-  # ecs.u1-c1m4.xlarge = economical universal x86, 4 vCPU / 16 GB; available in
-  # ap-southeast-1 (the g6 family is not offered there). Override per region as needed.
-  default = "ecs.u1-c1m4.xlarge"
+  # ecs.u1-c1m2.large = economical universal x86, 2 vCPU / 4 GB — plenty to build + run the
+  # whole compose stack for a demo, at roughly a quarter of the 4 vCPU/16 GB running cost.
+  # Same u1 family as the original, so an in-place resize is allowed. Bump to
+  # ecs.u1-c1m4.xlarge for heavier load.
+  default = "ecs.u1-c1m2.large"
 }
 
 variable "system_disk_size" {
