@@ -42,6 +42,12 @@ resource "alicloud_instance" "this" {
   instance_charge_type       = "PostPaid"
   internet_max_bandwidth_out = 0 # public connectivity comes from the EIP below
 
+  # Power state — flip to "Stopped" to halt compute billing (StopCharging = no fees for the
+  # stopped pay-as-you-go instance; you still pay only for the disk + EIP). Resumes at the
+  # same EIP; the app auto-restarts because the compose services use restart: unless-stopped.
+  status       = var.instance_status
+  stopped_mode = "StopCharging"
+
   tags = {
     project = var.project
     managed = "terraform"

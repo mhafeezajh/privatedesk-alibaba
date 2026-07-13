@@ -35,6 +35,16 @@ variable "system_disk_size" {
   default     = 40
 }
 
+variable "instance_status" {
+  description = <<-EOT
+    ECS power state: "Running" or "Stopped". Set "Stopped" (via `make infra-stop`) to halt
+    compute billing when you don't need the box; "Running" (`make infra-start`) to bring it
+    back at the same EIP. Stopped uses StopCharging mode — you pay only disk + EIP.
+  EOT
+  type        = string
+  default     = "Running"
+}
+
 variable "eip_bandwidth" {
   description = "EIP outbound bandwidth cap in Mbit/s."
   type        = number

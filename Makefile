@@ -10,7 +10,7 @@ TF_DIR ?= infra/terraform
 
 API_BASE ?= http://localhost:8000
 
-.PHONY: help dev logs health seed test smoke evals down deploy infra-plan infra-up infra-down infra-output
+.PHONY: help dev logs health seed test smoke evals down deploy infra-plan infra-up infra-down infra-output infra-stop infra-start
 
 help:
 	@echo "make dev                                   build + run locally, wait for health, seed"
@@ -25,6 +25,8 @@ help:
 	@echo "make infra-up                              provision Alibaba Cloud + deploy via Terraform (whole package)"
 	@echo "make infra-plan                            preview the Terraform plan"
 	@echo "make infra-output                          show app URL / health / ssh from Terraform state"
+	@echo "make infra-stop                            stop the ECS instance (halt compute billing; keep disk+EIP)"
+	@echo "make infra-start                           start the ECS instance again (same EIP; app auto-restarts)"
 	@echo "make infra-down                            destroy all Terraform-managed cloud resources"
 
 dev:
@@ -67,6 +69,14 @@ infra-up:
 
 infra-output:
 	@cd $(TF_DIR) && terraform output
+
+infra-stop:
+	cd $(TF_DIR) && terraform apply -auto-approve -var instance_status=Stopped
+	@echo "Instance stopped (StopCharging). Compute billing halted; disk + EIP remain. Restart: make infra-start"
+
+infra-start:
+	cd $(TF_DIR) && terraform apply -auto-approve -var instance_status=Running
+	@$(MAKE) infra-output
 
 infra-down:
 	cd $(TF_DIR) && terraform destroy
