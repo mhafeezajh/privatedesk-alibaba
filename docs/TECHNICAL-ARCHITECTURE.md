@@ -8,11 +8,19 @@ How the system is built and how each component works. Companion to
 ## 1. What it is, in one paragraph
 
 PrivateDesk MemoryAgent is a **per-principal private memory layer for AI agents**. Each
-*principal* (in the reference build, a **legal matter**) is an isolated unit with its own
-persistent memory; one principal's memory is never reachable by another's. The wall between
-principals is enforced in the **retrieval layer** — not merely asked for in a prompt — and is
-covered by a guard test. The same code runs against **Qwen Cloud (DashScope)** or a **local
-Ollama** open-weight model, selected by a single environment variable.
+*principal* is an isolated unit with its own persistent memory; one principal's memory is never
+reachable by another's. The wall between principals is enforced in the **retrieval layer** — not
+merely asked for in a prompt — is bound to a **logged-in identity** (§3.5), extends to the **LLM
+prompt cache** (§3.6), and is covered by a guard test. The same code runs against **Qwen Cloud
+(DashScope)** or a **local Ollama** open-weight model, selected by a single environment variable.
+
+**Two domains ship on the identical engine**, chosen at the login screen — swapping is *data, not
+code* (`_SCENARIOS` in [`routers/demo.py`](../api/app/routers/demo.py)):
+
+| Domain | Principal | The wall is | Confidential "needle" |
+|---|---|---|---|
+| **Legal** | a *matter* (`role: matter`) | the profession's **ethical wall** | Acme's $4.2M settlement ceiling |
+| **Healthcare** | a *patient* (`role: patient`) | **patient confidentiality** | a patient's HIV status + medication |
 
 ---
 
@@ -116,6 +124,33 @@ unreachable.
 leakage. It is the codified invariant; keep it green. Run it live:
 `docker compose exec api pytest -q tests/test_isolation.py`.
 
+### 3.5 Authentication & access control (who may read a namespace)
+
+[`auth.py`](../api/app/auth.py) — a *dummy* login (no passwords) that nevertheless establishes a
+**real, server-verifiable identity**. Tokens are HMAC-signed with `SESSION_SECRET` (stateless — no
+store, survive restarts). Three roles:
+
+| Role | May do | May **not** |
+|---|---|---|
+| `principal` (bound to one member) | read/write **only that principal's** content | anything else → **403** |
+| `supervisor` | cross-principal **metadata** (`/inspector/overview`, `/report`) | read content or chat → **403** |
+| `demo` | read across principals (the labelled isolation demonstration) | — |
+
+`POST /api/auth/login` binds the token to a member **server-side**; `authorize_content()` /
+`authorize_metadata()` enforce it on chat, memories, audit, maintenance, and actions. A client can
+never widen its own access by passing another `member_id` — the check is server-side.
+
+### 3.6 Cache isolation (the second-order leak)
+
+Providers cache prompt **prefixes**, and all principals share one API key — so a shared cache is a
+cross-principal **timing side-channel** (B can detect that A recently submitted a prefix). A cache
+hit can't inject A's content into B's prompt, but membership inference alone breaks an ethical
+wall. [`llm/cache_isolation.py`](../api/app/llm/cache_isolation.py) **partitions** the cache instead
+of disabling it: an unguessable per-principal token (`HMAC(SESSION_SECRET, namespace)`) is
+prepended to the cached prefix — cache hits *within* a principal (perf kept), never *across*
+(isolation kept). `PROMPT_CACHE_MODE` = `partitioned` (default) | `off` | `shared`. Full threat
+model: [`CACHE-ISOLATION.md`](CACHE-ISOLATION.md).
+
 ---
 
 ## 4. The memory engine
@@ -129,20 +164,25 @@ Runs **after** the reply is streamed, so it never blocks the user.
 ```
 turn text ──► LLM extraction (JSON) ──► for each candidate (max 4):
                 embed(content)
-                search top-3 in this namespace
-                  └─ if cosine ≥ DEDUP_THRESHOLD (0.92):
-                        ask LLM "does NEW supersede OLD?"
-                          ├─ yes → mark OLD superseded, store NEW
-                          └─ no  → skip (true duplicate)
+                search top-12 neighbours in this namespace (score-sorted)
+                  └─ for each with cosine ≥ SUPERSEDE_SCAN_FLOOR (0.60):
+                        ask LLM to classify OLD vs NEW:
+                          ├─ "supersedes" → mark OLD superseded, store NEW   (stop)
+                          ├─ "duplicate"  → skip, nothing new to store       (stop)
+                          └─ "distinct"   → keep scanning, then store NEW
                 persist row (Postgres) + upsert vector (Qdrant, wait=True) + audit
 ```
 
 - **Extraction** ([`extraction_messages`](../api/app/llm/prompts.py)) pulls durable, reusable
   memories (`fact / preference / event / task / relationship`) with a salience score; skips
-  chit-chat; max 4 per turn.
-- **Supersession** is how "forgetting" happens at write time: a near-duplicate that *updates*
-  an old belief flips the old one to `superseded` (struck-through in the UI) and links
-  `superseded_by`.
+  chit-chat *and the user's own questions*; max 4 per turn.
+- **Supersession** is how "forgetting" happens at write time: an update flips the old memory to
+  `superseded` (struck-through in the UI) and links `superseded_by`.
+- **Why a 0.60 floor + a 3-way LLM verdict.** `text-embedding-v4` similarities run low — a real
+  update ("$4.2M ceiling" → "raised to $5.0M") scores only **~0.72**, so the original 0.92 cutoff
+  meant supersession *never fired*. Lowering the floor alone would wrongly merge merely-similar
+  memories, so the LLM makes the call three ways and "distinct" memories simply coexist. The
+  evals caught this.
 
 ### 4.2 Read path (`recall`) — bounded, ranked
 
@@ -221,9 +261,19 @@ The SSE contract (`event: trace` → `data: {token}`… → `event: proposed_act
 - **[`main.py`](../api/app/main.py)** — app factory, permissive CORS (demo), routers, and a
   `/health` that does **one real completion + one real embedding** to prove the provider is
   live (`llm_ok`, `embedding_dim_live`).
-- **Routers:** `chat` (session + streaming), `members` (principal list + `require_member`),
-  `inspector` (memories/audit/maintenance), `actions` (HITL pending/approve/reject), `demo`
-  (seed).
+- **Routers:** `auth` (dummy login → signed identity, §3.5), `chat` (session + streaming),
+  `members` (principal list + `require_member`), `inspector` (memories / audit / maintenance /
+  **`report`** / **`overview`**), `actions` (HITL pending/approve/reject), `demo` (scenario seed).
+
+### 6.7 The governance surface
+The memory layer *is* the compliance surface, exposed two ways:
+- **`GET /api/inspector/report?member_id=`** — per-principal governance report: memory state by
+  status/kind, the full audit breakdown, HITL decisions, and an **attestation** statement.
+  Metadata only (no memory text), so a supervisor may read it. Rendered by the **Governance** tab,
+  with a one-click **Download report** (JSON).
+- **`GET /api/inspector/overview`** — *supervisor/demo only*: the cross-principal dashboard —
+  every principal's counts, isolation-block totals, and attestation, **and no content**. This is
+  how oversight confirms the walls hold without seeing through them.
 
 ### 6.3 llm — the provider seam
 [`llm/client.py`](../api/app/llm/client.py) wraps **LiteLLM** so cloud⇄local is a *config*
@@ -286,7 +336,19 @@ architecture, two deployments" literally true.
 
 ---
 
-## 9. Reliability hardening
+## 9. Reliability hardening & how it's verified
+
+Three automated suites gate every change — see [`TEST-CASES.md`](TEST-CASES.md) (engineer) and
+[`FUNCTIONAL-TEST-CASES.md`](FUNCTIONAL-TEST-CASES.md) (business/UAT):
+
+| Suite | What it proves | Current |
+|---|---|---|
+| [`evals/run_evals.py`](../evals/run_evals.py) | scores all four behaviors + HITL end-to-end; **exits non-zero on any isolation leak** | **100/100** |
+| [`scripts/smoke-test.sh`](../scripts/smoke-test.sh) | auth matrix (401/403), both domains' walls, health | **12/12** |
+| [`tests/test_isolation.py`](../api/tests/test_isolation.py) | vector-layer chokepoint over 120 memories | **1 passed** |
+
+The evals are what *found* the bugs below (and the missing `isolation_block` audit event, and a
+supersession that never fired) — they're a regression guard, not decoration.
 
 Three fixes make the seed and recall deterministic (added after a first deploy surfaced a
 half-indexed matter):
@@ -331,7 +393,7 @@ VPC → vSwitch → Security Group → ECS (Ubuntu 24.04) → EIP
 | File | Role |
 |---|---|
 | [`network.tf`](../infra/terraform/network.tf) | VPC, vSwitch, security group — **only** 22/3000/8000 inbound |
-| [`compute.tf`](../infra/terraform/compute.tf) | Ubuntu 24.04 ECS (`ecs.u1-c1m4.xlarge`, 4 vCPU/16 GB), EIP, generated SSH key |
+| [`compute.tf`](../infra/terraform/compute.tf) | Ubuntu 24.04 ECS (`ecs.u1-c1m2.large`, 2 vCPU/4 GB), EIP, generated SSH key, power state |
 | [`deploy.tf`](../infra/terraform/deploy.tf) | Package + ship source, render `.env`, build with correct `NEXT_PUBLIC_API_BASE`, start, seed |
 | [`templates/env.tftpl`](../infra/terraform/templates/env.tftpl) | Server `.env` (DashScope key, session secret, `K_CANDIDATES`) |
 | [`variables.tf`](../infra/terraform/variables.tf) / [`outputs.tf`](../infra/terraform/outputs.tf) | Tunables (region, size, CIDRs, `k_candidates`) / URLs, SSH, isolation-test command |
@@ -367,10 +429,11 @@ Do **not** break these (also in [`CLAUDE.md`](../CLAUDE.md)):
 
 ## 12. Honest state (what's real vs. next)
 
-- **Identity is a picker, not authentication.** The wall *between* namespaces is enforced and
-  tested; binding a human to a principal (passkeys/SSO) is the first real-product addition.
-- **Lean topology:** one matter = one namespace. Team access to a shared matter, a client-facing
-  view, and real auth are extensions on top of the same engine.
+- **Login is a *dummy* login (no passwords)** — but the auth is real: a signed token binds a
+  session to one principal server-side and the API 403s any other principal (§3.5). Swapping in
+  real passwordless/SSO is a drop-in.
+- **Lean topology:** one principal = one namespace. Team access to a shared principal and a
+  client-facing view are extensions on top of the same engine.
 - **Redis** is provisioned but the reference build persists sessions in Postgres.
 - **DB migrations** are `create_all` for hackathon speed; swap for Alembic in production.
 - **CORS** is fully open for the demo; lock it down for production.

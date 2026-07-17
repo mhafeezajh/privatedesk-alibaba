@@ -8,7 +8,9 @@
 
 ## Pre-flight (do before you hit record)
 
+- [ ] **Start the box first** — it's kept stopped to avoid pay-as-you-go charges: `make infra-start` (boots at the same IP in ~1–2 min; the app auto-restarts). Run `make infra-stop` when you're done recording.
 - [ ] Record against the **live Alibaba Cloud box** — open http://47.236.30.110:3000 (keep the URL visible in the recording so judges see it's deployed). `curl http://47.236.30.110:8000/health` returns `"provider":"Qwen Cloud (DashScope)"` and `"llm_ok":true`.
+- [ ] Optional but strong: run `make smoke` (12/12) and `make evals` (100/100) beforehand so you can quote them on camera.
 - [ ] On the **login screen**, keep the **Legal — matters** domain and click **Load matters demo data** once so the three matters exist: *Acme Corp v. Borealis — Litigation*, *Borealis Ltd — Employment Counsel*, *Vertex / Nimbus — M&A*, with 110+ discovery memories on the litigation matter. (Then log in as a matter to start.)
 - [ ] Browser full-screen, bookmarks bar hidden, one tab only, zoom ~110% so text is legible in the recording.
 - [ ] Decide your new settlement figure for the forgetting beat (script uses **$5M**).

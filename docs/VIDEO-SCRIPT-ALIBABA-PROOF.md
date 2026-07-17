@@ -11,6 +11,8 @@ in Singapore, calling Qwen Cloud (DashScope) — not on your laptop.
 
 ## Pre-flight
 
+- [ ] **Start the box** — it's kept stopped to avoid charges: `make infra-start` (same IP, ~1–2 min).
+      The console must show it **Running** for this clip. `make infra-stop` afterwards.
 - [ ] Log in to the **Alibaba Cloud console** in a browser (ECS → Instances, Singapore region).
 - [ ] Have a terminal ready with the SSH key: `infra/terraform/generated/privatedesk.pem`.
 - [ ] Confirm the box is healthy: `curl http://47.236.30.110:8000/health` → `"llm_ok": true`.
@@ -23,7 +25,7 @@ in Singapore, calling Qwen Cloud (DashScope) — not on your laptop.
 ### Shot 1 (0:00–0:20) — The ECS instance in the Alibaba console
 | | |
 |---|---|
-| **On screen** | Alibaba Cloud **ECS → Instances**, Singapore (`ap-southeast-1`). Show the `privatedesk-api` instance **Running**, its **type** (`ecs.u1-c1m4.xlarge`), and its **public/EIP `47.236.30.110`**. Hover the region selector so "Singapore" is visible. |
+| **On screen** | Alibaba Cloud **ECS → Instances**, Singapore (`ap-southeast-1`). Show the `privatedesk-api` instance **Running**, its **type** (`ecs.u1-c1m2.large`), and its **public/EIP `47.236.30.110`**. Hover the region selector so "Singapore" is visible. |
 | **Say** | "The backend runs on an Alibaba Cloud ECS instance in the Singapore region — here it is, running, with elastic IP 47.236.30.110." |
 
 ### Shot 2 (0:20–0:30) — Networking (optional but strong)

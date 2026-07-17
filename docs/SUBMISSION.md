@@ -23,14 +23,10 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 - The repo contains **all** source (api, web), IaC (`infra/terraform`), assets (`docs/`), and
   run/deploy instructions ([`README.md`](../README.md), [`DEPLOY.md`](../DEPLOY.md)).
 
-> **To make this real (repo is not yet on GitHub):**
-> ```bash
-> git init && git add -A && git commit -m "PrivateDesk MemoryAgent"
-> gh repo create privatedesk-memoryagent --public --source=. --push   # or create on github.com
-> ```
-> Then confirm the **About** box on the repo page shows the **MIT** license badge.
-> Make sure `infra/terraform/.secrets.env`, `*.tfstate`, and `generated/` are git-ignored
-> (they already are) so **no keys are ever pushed**.
+> ✅ Pushed. Secrets verified **not** committed (`.secrets.env`, `*.tfstate`, `generated/`,
+> `terraform.tfvars` are all git-ignored).
+> ⚠️ **Before submitting:** confirm the repo is set to **Public** (Settings → General → Change
+> visibility) and that the **About** panel shows the **MIT** license badge.
 
 ---
 
@@ -161,7 +157,20 @@ seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.s
 |---|---|
 | App | http://47.236.30.110:3000 |
 | Health | http://47.236.30.110:8000/health |
-| Region / instance | Alibaba Cloud `ap-southeast-1` (Singapore) · `ecs.u1-c1m4.xlarge` |
+| Region / instance | Alibaba Cloud `ap-southeast-1` (Singapore) · `ecs.u1-c1m2.large` (2 vCPU / 4 GB) |
 | Isolation proof | `ssh -i infra/terraform/generated/privatedesk.pem root@47.236.30.110 'cd privatedesk-memoryagent && docker compose exec -T api pytest -q tests/test_isolation.py'` |
 
-> Keep the ECS instance running until judging closes. Tear down afterward with `make infra-down`.
+> ## ⚠️ The box is currently STOPPED (to stop pay-as-you-go charges)
+>
+> The ECS instance is stopped in StopCharging mode, so **the URLs above will not respond right
+> now**. This is deliberate cost control — but it means:
+>
+> 1. **Before recording either video**, run `make infra-start` (boots at the *same* IP in ~1–2 min;
+>    the app auto-restarts). Verify `/health` → `"llm_ok": true`, then record.
+> 2. **Before you submit / while judging is open**, run `make infra-start` and **leave it running**
+>    — a judge clicking a dead link is a lost submission. At ~$0.06/hr (2 vCPU/4 GB) a week of
+>    judging is only a few dollars.
+> 3. `make infra-stop` when idle; `make infra-down` to destroy everything once judging closes.
+>
+> If you'd rather not depend on a live box at all, the **videos + repo are self-sufficient** —
+> the live URL is a bonus, not a requirement of the rules.

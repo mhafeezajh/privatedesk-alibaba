@@ -22,7 +22,7 @@ variable "dashscope_api_key" {
 }
 
 variable "instance_type" {
-  description = "ECS instance type. Default ~4 vCPU / 16 GB, enough for the full compose stack."
+  description = "ECS instance type. Default 2 vCPU / 4 GB — enough to build and run the full compose stack."
   type        = string
   # ecs.u1-c1m2.large = economical universal x86, 2 vCPU / 4 GB — plenty to build + run the
   # whole compose stack for a demo, at roughly a quarter of the 4 vCPU/16 GB running cost.

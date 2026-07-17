@@ -52,7 +52,12 @@ scripts/                    dev-up, bootstrap-server, deploy-remote
    actions, not auto-executed.
 
 ## Honest state (don't overclaim)
-- Identity is currently a **picker, not authentication.** The wall between namespaces is
-  enforced; binding a human to a principal (passkeys/SSO) is the first real-product addition.
-- The legal build uses the lean topology: **one matter = one namespace.** Team access to a
-  shared matter, a client-facing view, and real auth are extensions on top of the same engine.
+- Login is a **dummy login (no passwords)** — but the auth is real: a signed token binds a session
+  to one principal server-side and the API returns **403** for any other principal
+  (`api/app/auth.py`). Real passwordless/SSO is a drop-in on top.
+- Roles: `principal` (own data only), `supervisor` (cross-principal **metadata only** — never
+  content), `demo` (the god-view for the isolation demonstration; labelled as such in the UI).
+- Lean topology: **one principal = one namespace.** Team access to a shared principal and a
+  client-facing view are extensions on top of the same engine.
+- Two scenarios ship: **legal** (matters / ethical wall) and **healthcare** (patients /
+  confidentiality), chosen at the login screen. Same engine — swapping domains is data, not code.

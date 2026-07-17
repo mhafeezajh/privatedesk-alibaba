@@ -11,7 +11,7 @@ Open http://localhost:3000. Health is at http://localhost:8000/health.
 
 ## Deploy to Alibaba Cloud ECS (automated)
 You still create the VM yourself (see the click-by-click in `docs/deploy-alibaba-runbook.html`):
-an Ubuntu 24.04 instance, ~4 vCPU / 16 GB, with a public IP, and a security group allowing
+an Ubuntu 24.04 instance (2 vCPU / 4 GB is plenty), with a public IP, and a security group allowing
 inbound **TCP 22 (your IP), 8000, and 3000**. Then, from your laptop:
 
 ```bash

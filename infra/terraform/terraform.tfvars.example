@@ -3,7 +3,7 @@
 
 region        = "ap-southeast-1"   # Singapore, near the DashScope intl endpoint
 project       = "privatedesk"
-instance_type = "ecs.u1-c1m4.xlarge"  # ~4 vCPU / 16 GB (available in ap-southeast-1)
+instance_type = "ecs.u1-c1m2.large"   # 2 vCPU / 4 GB (cheap; ecs.u1-c1m4.xlarge = 4c/16g for heavier load)
 
 # Lock SSH to your own IP for anything longer-lived than a demo:
 # admin_cidr = "203.0.113.4/32"
