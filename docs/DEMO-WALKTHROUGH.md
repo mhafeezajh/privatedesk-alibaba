@@ -245,20 +245,25 @@ ssh -i infra/terraform/generated/privatedesk.pem root@47.236.30.110 \
 
 ## 6. Suggested 3-minute narrative
 
-1. **(0:00) Frame it.** "Every legal matter gets its own private assistant, behind a login. The
-   wall between matters is the ethical wall — and we enforce and prove it."
-2. **(0:20) Isolation.** Log in as **Litigation** → $4.2M. Log out, log in as **Employment** →
-   blocked (403). Show the `isolation_block` in Governance/Audit.
-3. **(1:00) Oversight + demo x-ray.** Log in as **Supervisor** → the metadata dashboard (walls
-   hold, no content). Then **Demo mode** → the side-by-side Ethical Wall ($4.2M here / absent
-   there) under the "demonstration only" banner.
-4. **(1:40) Accumulation.** Add the paralegal fact, recall it indirectly, reload to show
-   persistence.
-5. **(2:05) Bounded recall.** Broad discovery question → Recall trace funnel: 115 → 64 → 6.
-6. **(2:25) Forgetting.** Supersede the ceiling → old one struck through; Run maintenance.
-7. **(2:40) Human-in-the-loop.** Ask for a reminder → Approve. "Assistants draft; attorneys decide."
-8. **(2:55) Close.** Run the checks live: `make smoke` (12/12), `make evals` (100/100), isolation
-   pytest `1 passed`. "The wall isn't a prompt — it's enforced server-side and measured."
+The full shot-by-shot version (with the exact lines to say) is
+[`demo-video-script.md`](demo-video-script.md). In brief:
+
+1. **(0:00) Frame it + architecture.** Login screen; flash the architecture diagram. "Every matter
+   gets its own assistant behind a login; every memory read goes through one isolation chokepoint;
+   models from Qwen Cloud — or fully local on open weights."
+2. **(0:18) Accumulation.** Tell Litigation a fact → reload → it still knows; show the recall trace.
+3. **(0:42) Isolation ← the money shot.** Log out → log in as **Employment** → same question →
+   **403 / no access**. Then **Demo mode** → side-by-side wall ($4.2M here / absent there, under the
+   "demonstration only" banner) + the `isolation_block` event.
+4. **(1:22) Oversight.** Log in as **Supervisor** → metadata dashboard: the walls hold, and it sees
+   **no content**. "Oversight isn't a backdoor."
+5. **(1:40) Bounded recall.** Broad discovery question → funnel **64 → 6** out of 115 stored.
+6. **(2:00) Forgetting.** Raise the ceiling to $5M → the $4.2M memory flips to **superseded**.
+7. **(2:18) Healthcare — same engine.** Switch domain → log in as **James** → ask for **Maria's HIV
+   status** → refused. "The ethical wall just became patient confidentiality. Data, not code."
+8. **(2:38) Human-in-the-loop.** Ask for a reminder → **Approve** → audited.
+9. **(2:52) Close.** `make evals` **100/100** + isolation guard `1 passed`. "The wall isn't a
+   prompt — it's enforced, extended to the LLM cache, and measured."
 
 ---
 
