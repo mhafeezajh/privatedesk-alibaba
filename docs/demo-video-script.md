@@ -1,14 +1,15 @@
-# PrivateDesk — Demo Video Script (≈3:00)
+# PrivateDesk — Demo Video Script (≈3:15)
 
-**Target:** ~3:00 · Qwen Cloud Global AI Hackathon, Track 1 (MemoryAgent)
-**Covers:** the four scored behaviors (accumulation · isolation · forgetting · bounded recall)
-+ human-in-the-loop, **plus** the architecture, per-principal auth, metadata-only oversight, and
-the **second domain (healthcare)** that proves this is a memory *substrate*, not a legal app.
-**The money shot is isolation** (0:42–1:22) — give it room; everything else is brisk.
+**Target:** ~3:00–3:15 · Qwen Cloud Global AI Hackathon, Track 1 (MemoryAgent)
+**Structure:** **Part 1 (~1 min)** explains what PrivateDesk is (problem → the one idea →
+architecture); **Part 2 (~2 min)** demos the use case — the four scored behaviors (accumulation ·
+isolation · forgetting · bounded recall) + human-in-the-loop, plus metadata-only oversight and the
+**second domain (healthcare)** that proves this is a memory *substrate*, not a legal app.
+**The money shot is isolation** (1:18–1:52) — give it room; everything else is brisk.
 
-> **Editing note — this is what makes 3:00 possible:** cut the dead air while the LLM streams.
-> Record naturally, then trim every wait. The recall **trace appears before the tokens**, so you
-> can keep talking over it.
+> **Editing note — this is what keeps it tight:** cut the dead air while the LLM streams. Record
+> naturally, then trim every wait. The recall **trace appears before the tokens**, so you can keep
+> talking over it. To hit a hard 3:00, drop the Oversight beat (1:52–2:04) and trim the intro to ~45s.
 
 ---
 
@@ -29,59 +30,85 @@ the **second domain (healthcare)** that proves this is a memory *substrate*, not
 
 ## The script
 
-### 0:00–0:18 — Hook + architecture
+Two parts: **~1 min explaining PrivateDesk**, then **~2 min demoing the use case**. Total ≈ 3:15.
+(To trim to 3:00, drop the Oversight beat and tighten the intro to ~45s — see the trim note.)
+
+---
+
+## Part 1 — What PrivateDesk is  (0:00–1:00)
+
+*Narration-led. On screen: start on the login screen, move to the **architecture diagram** for the
+middle, end back on the cockpit. Speak calmly — this is the "why".*
+
+### 0:00–0:22 — The problem
 | | |
 |---|---|
-| **On screen** | The **login screen** (domain toggle + "log in as"). At ~0:10 flash the **architecture diagram** tab for ~6s, then back. |
-| **Say** | "This is PrivateDesk. Every legal matter gets its own AI assistant with private, walled-off memory — behind a login. Under the hood: a Next.js cockpit, a FastAPI memory engine, Postgres and Qdrant — and every single memory read goes through **one** isolation chokepoint. Models come from **Qwen Cloud**; the exact same code runs fully local on open-weight Qwen3. Because privacy isn't where the data lives — it's isolation, open weights, and never training on it." |
+| **On screen** | Login screen (or a simple title card). Cursor still. |
+| **Say** | "Every AI agent needs memory. But most 'AI memory' today is one big shared database with a customer label bolted on — and one missing filter leaks one client's data into another's answer. In a law firm, or a hospital, that isn't a bug — it's a confidentiality breach. **PrivateDesk** fixes that at the root." |
 
-### 0:18–0:42 — Accumulation
+### 0:22–0:44 — What it is + the one idea
+| | |
+|---|---|
+| **On screen** | Switch to the **architecture diagram** (`docs/architecture.png`). Trace: frontend → backend → the chokepoint → Qdrant/Postgres. |
+| **Say** | "PrivateDesk is a **private memory layer for AI agents**. Every *principal* — a legal matter, a patient, a tenant — gets its own persistent memory that no one else can reach. And the isolation is **structural, not hopeful**: every memory read goes through a *single chokepoint* that's always scoped to one principal, and a guard test fails the build the moment anything crosses. The wall is **provable, not promised**." |
+
+### 0:44–1:00 — The engine, the stack, and where it runs
+| | |
+|---|---|
+| **On screen** | Diagram → pan the empty cockpit. Show the login roles (principal / supervisor / demo). |
+| **Say** | "On top of that isolation sits a real memory engine — it remembers across sessions, retires outdated facts, and recalls only the few most relevant memories under a token budget — and a human approves any action. It's a Next.js cockpit over a FastAPI engine, Postgres and Qdrant, powered by **Qwen** — and the *same code* runs fully local on open weights. It's live on Alibaba Cloud. Let me show you, inside a law firm." |
+
+---
+
+## Part 2 — The use case  (1:00–3:15)
+
+### 1:00–1:18 — Accumulation
 | | |
 |---|---|
 | **On screen** | **Log in as → Acme — Litigation.** Type: *"Note for the file: our lead expert is Dr. Lena Ortiz; her deposition is next month."* Send. **Reload the page** (fresh session, still logged in). Ask: *"Who's our lead expert and when's the deposition?"* → correct answer. Click **Recall trace**. |
-| **Say** | "I tell the Acme matter a fact… then start a brand-new session. It still knows — that fact was distilled into persistent memory, not chat history. The recall trace shows exactly which memory it pulled back." |
+| **Say** | "I tell the Acme matter a fact… then start a brand-new session. It still knows — that fact became persistent memory, not chat history. The recall trace shows exactly which memory it pulled back." |
 
-### 0:42–1:22 — Isolation: the ethical wall ← **spend time here**
+### 1:18–1:52 — Isolation: the ethical wall ← **the money shot**
 | | |
 |---|---|
-| **On screen** | **Log out → Log in as → Borealis — Employment.** Ask: *"What's Acme's settlement position against Borealis?"* → no access. *(Optional: devtools Network → a request for the other matter returns **403**.)* Then **Log out → Enter Demo mode** → **Ethical wall** tab (point at the *"demonstration only"* banner): **$4.2M** in the Acme pane, **absent** in Borealis's. Open **Governance/Audit** → the **`isolation_block`** event. |
-| **Say** | "Here's the test. The firm sues Borealis for Acme — and *separately* advises Borealis. Those teams must be screened. So I log in as the *Borealis* attorney and ask for Acme's settlement strategy… no access. And this isn't the model being polite — the **API itself returns 403**. A principal's login physically cannot reach another's memory. This demo view puts both stores side by side: Acme's privileged $4.2 million ceiling lives here, and simply doesn't exist in Borealis's world. The attempt is logged as an isolation block. If that leaked, the firm just handed the other side its strategy." |
+| **On screen** | **Log out → Log in as → Borealis — Employment.** Ask: *"What's Acme's settlement position against Borealis?"* → no access. *(Optional: devtools Network → the request returns **403**.)* Then **Log out → Enter Demo mode** → **Ethical wall** tab (note the *"demonstration only"* banner): **$4.2M** in the Acme pane, **absent** in Borealis's. Open **Governance/Audit** → the **`isolation_block`** event. |
+| **Say** | "Here's the test. The firm sues Borealis for Acme — and *separately* advises Borealis; those teams must be screened. So I log in as the *Borealis* attorney and ask for Acme's settlement strategy… no access. And this isn't the model being polite — the **API itself returns 403**; one principal's login physically cannot reach another's memory. Side by side: Acme's privileged $4.2 million ceiling lives here, and simply doesn't exist in Borealis's world — and the attempt is logged as an isolation block." |
 
-### 1:22–1:40 — Oversight without overreach
+### 1:52–2:04 — Oversight without overreach
 | | |
 |---|---|
-| **On screen** | **Log out → Log in as Compliance / Supervisor.** The metadata dashboard: per-matter counts, isolation blocks, "✓ isolated". Scroll — **no memory content anywhere**. |
-| **Say** | "But compliance still needs assurance. So there's an oversight login that sees *that* the walls hold — counts, blocked attempts, attestation — and **never sees through them**. No memory content, at all. Oversight isn't a backdoor." |
+| **On screen** | **Log out → Log in as Compliance / Supervisor.** Metadata dashboard: per-matter counts, isolation blocks, "✓ isolated". Scroll — **no memory content**. |
+| **Say** | "Compliance still needs assurance — so an oversight login sees *that* the walls hold: counts, blocked attempts, attestation — and never sees *through* them. Oversight isn't a backdoor." |
 
-### 1:40–2:00 — Bounded recall at scale
+### 2:04–2:20 — Bounded recall at scale
 | | |
 |---|---|
 | **On screen** | Back in **Acme — Litigation** (115 memories). Ask: *"What discovery do we have on the supply-contract timeline?"* → **Recall trace**: funnel **64 retrieved → 6 into context**, with the token count. |
-| **Say** | "This matter holds over a hundred discovery memories. Watch the funnel — 64 candidates retrieved, ranked by similarity, importance and recency, and only the **six** most relevant entered the model's context, under a token budget. The store can grow forever; the prompt stays small." |
+| **Say** | "This matter holds over a hundred discovery memories. Watch the funnel — 64 retrieved, ranked by similarity, importance and recency, and only the **six** most relevant entered the context, under a token budget. The store grows forever; the prompt stays small." |
 
-### 2:00–2:18 — Forgetting
+### 2:20–2:35 — Forgetting
 | | |
 |---|---|
-| **On screen** | Type: *"Update: the board raised the settlement ceiling to $5M."* Open **Memory store** — old **$4.2M** now **superseded** (struck through), **$5M** active. Ask *"What's our current ceiling?"* → **$5M**. |
-| **Say** | "Memory has to stay current. I raise the ceiling — and the old figure is automatically retired as superseded, not silently kept. The assistant now acts on the new truth, and the old one is greyed out for the record." |
+| **On screen** | Type: *"Update: the board raised the settlement ceiling to $5M."* Open **Memory store** — old **$4.2M** now **superseded** (struck through), **$5M** active. |
+| **Say** | "Memory has to stay current. I raise the ceiling — and the old figure is automatically retired as superseded, not silently kept. The assistant acts on the new truth." |
 
-### 2:18–2:38 — Same engine, different industry (healthcare)
+### 2:35–2:52 — Same engine, different industry (healthcare)
 | | |
 |---|---|
-| **On screen** | **Log out** → toggle domain to **Healthcare — patients** → **Load patients demo data** → three patients appear. **Log in as James Okoro — Cardiology.** Ask: *"What is Maria Delgado's HIV status?"* → refused. |
-| **Say** | "And this isn't a legal app. Flip the domain: now the principals are **patients**. Logged in on James's chart, I ask for another patient's HIV status — refused. Identical engine, identical chokepoint — the ethical wall just became **patient confidentiality**. Changing industry is *data, not code*." |
+| **On screen** | **Log out** → toggle domain to **Healthcare — patients** → **Load patients demo data**. **Log in as James Okoro — Cardiology.** Ask: *"What is Maria Delgado's HIV status?"* → refused. |
+| **Say** | "And this isn't a legal app. Flip the domain — now the principals are **patients**. On James's chart I ask for another patient's HIV status — refused. Identical engine, identical chokepoint; the ethical wall just became **patient confidentiality**. Changing industry is *data, not code*." |
 
-### 2:38–2:52 — Human-in-the-loop
+### 2:52–3:04 — Human-in-the-loop
 | | |
 |---|---|
 | **On screen** | Ask: *"Please set a reminder to file the motion to exclude next Friday."* A **proposed action** card appears → click **Approve** → audit shows `hitl_approved`. |
-| **Say** | "And nothing acts on its own. The assistant *drafts*; a human approves — and the decision is audited. Assistants draft, attorneys decide." |
+| **Say** | "And nothing acts on its own — the assistant *drafts*, a human approves, and the decision is audited." |
 
-### 2:52–3:05 — Close (the proof)
+### 3:04–3:16 — Close (the proof)
 | | |
 |---|---|
 | **On screen** | Terminal: `make evals` → **100/100**, and `pytest tests/test_isolation.py` → **1 passed**. Land on the cockpit. |
-| **Say** | "The wall isn't a prompt — it's enforced in the retrieval layer, extended even to the LLM's prompt cache, and it's **measured**: every behavior scores 100 out of 100, and a guard test fails the build if a single memory ever crosses. Private memory your auditor can verify. Same engine on Qwen Cloud — or fully local, on open weights. Built on Qwen." |
+| **Say** | "The wall isn't a prompt — it's enforced in the retrieval layer, extended even to the LLM's prompt cache, and it's **measured**: every behavior scores 100 out of 100, and a guard test fails the build if a single memory ever crosses. Private memory your auditor can verify — on Qwen Cloud, or fully local on open weights. Built on Qwen." |
 
 ---
 
