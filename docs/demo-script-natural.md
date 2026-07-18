@@ -47,12 +47,14 @@ approves*.
 ## Part 2 — The use case
 
 ### It remembers (accumulation)
-**Do:** Log in as **Acme — Litigation**. Tell it a fact: *"Note for the file: our lead expert is
-Dr. Lena Ortiz; her deposition is next month."* **Reload the page** (fresh session). Ask *"Who's
-our lead expert and when's the deposition?"* → it answers. Open the **Recall trace** tab.
+**Do:** Log in as **Acme — Litigation**. Tell it a **new** fact (one that isn't seeded): *"Note for
+the file: our lead paralegal on this matter is Marcus Bell, extension 4471."* Wait ~2 seconds, then
+**reload the page** (fresh session). Ask *"Who's our paralegal here and how do I reach them?"* → it
+answers **Marcus Bell, ext 4471**. Open the **Recall trace** tab.
 **Say:**
-> "I tell the Acme matter a fact, then start a brand-new session — and it still knows. That became
-> persistent memory, not chat history. The trace shows exactly which memory it pulled back."
+> "I tell the Acme matter a brand-new fact — our paralegal, Marcus Bell — then start a fresh
+> session, and it still knows, right down to his extension. That became persistent memory, not chat
+> history. The trace shows exactly which memory it pulled back."
 
 ### The wall — the important part (isolation)
 **Do:** Log out. Log in as **Borealis — Employment**. Ask the *same* question: *"What's Acme's
@@ -76,12 +78,12 @@ isolation blocks, "✓ isolated". Scroll — there's **no memory content**.
 > "Compliance still needs assurance — so an oversight login sees *that* the walls hold: counts,
 > blocked attempts, attestation — and never sees *through* them. Oversight isn't a backdoor."
 
-### A hundred memories, six in the prompt (bounded recall)
+### A hundred memories, a handful in the prompt (bounded recall)
 **Do:** Back in **Acme — Litigation** (115 memories). Ask *"What discovery do we have on the
-supply-contract timeline?"* Open **Recall trace** → the funnel: 64 retrieved → 6 into context.
+supply-contract timeline?"* Open **Recall trace** → the funnel: 64 retrieved → a few into context.
 **Say:**
 > "This matter holds over a hundred discovery memories. But watch — 64 retrieved, ranked by
-> relevance, importance and recency, and only the six best entered the model's context, under a
+> relevance, importance and recency, and only the few best, de-duplicated, entered the model's context, under a
 > token budget. The store grows forever; the prompt stays small."
 
 ### Staying current (forgetting)
@@ -125,7 +127,7 @@ action** card appears → click **Approve**. The audit shows `hitl_approved`.
 | Remembers | fact → reload → recall | "persistent memory, not chat history" |
 | **The wall** | Borealis asks Acme → 403 | "the API refuses — provable, not promised" |
 | Oversight | Supervisor dashboard | "sees *that* it holds, never *through* it" |
-| Bounded recall | trace funnel 64→6 | "store grows; prompt stays small" |
+| Bounded recall | trace funnel 64→a few | "store grows; prompt stays small" |
 | Forgetting | raise ceiling → superseded | "acts on the new truth" |
 | Healthcare | James blocked from Maria | "data, not code" |
 | Human gate | propose → approve | "assistants draft, humans decide" |

@@ -67,7 +67,7 @@ On top of that partition sits a real **memory engine**:
 - **Forgetting** — superseding facts auto-retire the old ones; an expiry + low-salience sweep
   prunes stale memory on demand.
 - **Bounded recall** — with 100+ memories on one principal, a similarity + salience + recency
-  reranker injects only the top ~6 into the prompt, under a token budget.
+  reranker drops near-duplicates and injects only the top few into the prompt, under a token budget.
 - **Human-in-the-loop** — the agent *drafts* actions; a human approves before anything is "done."
 
 **Why it's powerful:** it's a memory *substrate*, not a single-industry app. The demo proves this

@@ -7,6 +7,7 @@ Forgetting:  supersession (write-time) + expiry + salience decay/prune (maintena
 from __future__ import annotations
 
 import math
+import re
 from datetime import datetime, timezone
 
 from sqlalchemy import select, update
@@ -24,6 +25,19 @@ _s = get_settings()
 
 def _now() -> datetime:
     return datetime.now(timezone.utc)
+
+
+# Two selected memories whose token-set Jaccard is at/above this are treated as
+# near-duplicates during recall, so only one representative is kept.
+_NEAR_DUP = 0.6
+
+
+def _jaccard(a: str, b: str) -> float:
+    ta = set(re.findall(r"[a-z0-9]+", a.lower()))
+    tb = set(re.findall(r"[a-z0-9]+", b.lower()))
+    if not ta or not tb:
+        return 0.0
+    return len(ta & tb) / len(ta | tb)
 
 
 # ── WRITE PATH ───────────────────────────────────────────────────────────────
@@ -128,7 +142,19 @@ async def recall(db: AsyncSession, member, query: str) -> dict:
         scored.append((blended, c["score"], mem))
 
     scored.sort(key=lambda t: t[0], reverse=True)
-    top = scored[: _s.k_context]
+
+    # Diversity: greedily take the top-k, but skip a memory that is near-identical to one already
+    # chosen — otherwise a cluster of templated items (e.g. many "Deposition of witness X is on
+    # the discovery calendar") crowds out distinct, more useful context. Token-set Jaccard is
+    # cheap and enough to catch the templated near-duplicates without dropping genuinely
+    # different facts.
+    top: list = []
+    for cand in scored:
+        if any(_jaccard(cand[2].content, s[2].content) >= _NEAR_DUP for s in top):
+            continue
+        top.append(cand)
+        if len(top) >= _s.k_context:
+            break
 
     selected = [{
         "id": str(m.id), "kind": m.kind, "content": m.content,

@@ -162,7 +162,7 @@ On the **Litigation** matter (115 memories), ask something broad:
 Open **Recall trace** and read the funnel:
 
 ```
-  candidates retrieved (64)  →  selected into context (6)   ≈ tokens: ~100
+  candidates retrieved (64)  →  de-duplicated, selected into context (a few)   ≈ tokens: ~100
 ```
 
 Out of **115 stored** memories, **64** are pulled as vector candidates, then the reranker
@@ -257,7 +257,7 @@ The full shot-by-shot version (with the exact lines to say) is
    "demonstration only" banner) + the `isolation_block` event.
 4. **(1:22) Oversight.** Log in as **Supervisor** → metadata dashboard: the walls hold, and it sees
    **no content**. "Oversight isn't a backdoor."
-5. **(1:40) Bounded recall.** Broad discovery question → funnel **64 → 6** out of 115 stored.
+5. **(1:40) Bounded recall.** Broad discovery question → funnel **64 → a few** (de-duplicated) out of 115 stored.
 6. **(2:00) Forgetting.** Raise the ceiling to $5M → the $4.2M memory flips to **superseded**.
 7. **(2:18) Healthcare — same engine.** Switch domain → log in as **James** → ask for **Maria's HIV
    status** → refused. "The ethical wall just became patient confidentiality. Data, not code."

@@ -25,7 +25,7 @@ in Singapore, calling Qwen Cloud (DashScope) — not on your laptop.
 ### Shot 1 (0:00–0:20) — The ECS instance in the Alibaba console
 | | |
 |---|---|
-| **On screen** | Alibaba Cloud **ECS → Instances**, Singapore (`ap-southeast-1`). Show the `privatedesk-api` instance **Running**, its **type** (`ecs.u1-c1m2.large`), and its **public/EIP `47.236.30.110`**. Hover the region selector so "Singapore" is visible. |
+| **On screen** | Alibaba Cloud **ECS → Instances**, Singapore (`ap-southeast-1`). Show the `privatedesk-api` instance **Running**, its **type** (`ecs.u1-c1m4.large`), and its **public/EIP `47.236.30.110`**. Hover the region selector so "Singapore" is visible. |
 | **Say** | "The backend runs on an Alibaba Cloud ECS instance in the Singapore region — here it is, running, with elastic IP 47.236.30.110." |
 
 ### Shot 2 (0:20–0:30) — Networking (optional but strong)

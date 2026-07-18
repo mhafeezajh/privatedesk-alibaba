@@ -24,11 +24,11 @@ variable "dashscope_api_key" {
 variable "instance_type" {
   description = "ECS instance type. Default 2 vCPU / 4 GB — enough to build and run the full compose stack."
   type        = string
-  # ecs.u1-c1m2.large = economical universal x86, 2 vCPU / 4 GB — plenty to build + run the
-  # whole compose stack for a demo, at roughly a quarter of the 4 vCPU/16 GB running cost.
-  # Same u1 family as the original, so an in-place resize is allowed. Bump to
-  # ecs.u1-c1m4.xlarge for heavier load.
-  default = "ecs.u1-c1m2.large"
+  # ecs.u1-c1m4.large = economical universal x86, 2 vCPU / 8 GB — ~half the original
+  # 4 vCPU/16 GB running cost, and enough RAM to BUILD the Next.js web image alongside the
+  # data stores (4 GB OOM-thrashes during `npm run build`). The deploy also adds swap as a
+  # safety net. Same u1 family, so resizing between these is an in-place operation.
+  default = "ecs.u1-c1m4.large"
 }
 
 variable "system_disk_size" {

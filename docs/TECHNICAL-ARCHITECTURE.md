@@ -190,7 +190,7 @@ turn text ──► LLM extraction (JSON) ──► for each candidate (max 4):
 query ──► embed ──► qdrant.search(namespace, limit=K_CANDIDATES=64, active_only)
        ──► rerank each candidate by a blended score:
              blended = 0.60·similarity + 0.25·salience + 0.15·recency
-       ──► keep top K_CONTEXT=6  ──► inject into system prompt
+       ──► drop near-duplicates (token-Jaccard), keep top K_CONTEXT=6  ──► inject into prompt
        ──► bump last_used_at on the used memories  ──► emit a trace
 ```
 
@@ -393,7 +393,7 @@ VPC → vSwitch → Security Group → ECS (Ubuntu 24.04) → EIP
 | File | Role |
 |---|---|
 | [`network.tf`](../infra/terraform/network.tf) | VPC, vSwitch, security group — **only** 22/3000/8000 inbound |
-| [`compute.tf`](../infra/terraform/compute.tf) | Ubuntu 24.04 ECS (`ecs.u1-c1m2.large`, 2 vCPU/4 GB), EIP, generated SSH key, power state |
+| [`compute.tf`](../infra/terraform/compute.tf) | Ubuntu 24.04 ECS (`ecs.u1-c1m4.large`, 2 vCPU/8 GB), EIP, generated SSH key, power state |
 | [`deploy.tf`](../infra/terraform/deploy.tf) | Package + ship source, render `.env`, build with correct `NEXT_PUBLIC_API_BASE`, start, seed |
 | [`templates/env.tftpl`](../infra/terraform/templates/env.tftpl) | Server `.env` (DashScope key, session secret, `K_CANDIDATES`) |
 | [`variables.tf`](../infra/terraform/variables.tf) / [`outputs.tf`](../infra/terraform/outputs.tf) | Tunables (region, size, CIDRs, `k_candidates`) / URLs, SSH, isolation-test command |

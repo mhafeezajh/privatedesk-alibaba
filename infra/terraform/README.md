@@ -18,7 +18,7 @@ VPC ─ vSwitch ─ Security Group ─ ECS (Ubuntu 24.04) ─ EIP
 | `alicloud_vpc` + `alicloud_vswitch` | Isolated network in one zone |
 | `alicloud_security_group` (+ rules) | **Only** 22 (admin), 3000, 8000 inbound; all egress |
 | `alicloud_ecs_key_pair` + generated RSA key | SSH access (private key written to `generated/`, git-ignored) |
-| `alicloud_instance` | Ubuntu 24.04 box — default `ecs.u1-c1m2.large` (2 vCPU / 4 GB) |
+| `alicloud_instance` | Ubuntu 24.04 box — default `ecs.u1-c1m4.large` (2 vCPU / 8 GB) |
 | `alicloud_eip_address` + association | Stable public IP |
 | `null_resource.deploy` | Ships source, renders `.env`, `docker compose up`, seeds |
 

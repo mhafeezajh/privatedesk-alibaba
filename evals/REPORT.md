@@ -26,9 +26,9 @@
 - ✅ **isolation_block audit event present** — found
 
 ### Bounded recall  (100/100)
-- ✅ **context bounded to K_CONTEXT (6)** — selected=6 ≤ 6
-- ✅ **candidate pool >> selected** — candidates=64 vs selected=6
-- ✅ **store far larger than context (needle-in-haystack)** — 115 stored → 6 in prompt
+- ✅ **context bounded to K_CONTEXT (6)** — selected=5 ≤ 6
+- ✅ **candidate pool >> selected** — candidates=64 vs selected=5
+- ✅ **store far larger than context (needle-in-haystack)** — 115 stored → 5 in prompt
 
 ### Forgetting  (100/100)
 - ✅ **new fact stored active ($5.0M)** — found active $5.0M memory

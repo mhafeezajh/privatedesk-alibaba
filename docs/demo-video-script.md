@@ -67,8 +67,8 @@ middle, end back on the cockpit. Speak calmly — this is the "why".*
 ### 1:00–1:18 — Accumulation
 | | |
 |---|---|
-| **On screen** | **Log in as → Acme — Litigation.** Type: *"Note for the file: our lead expert is Dr. Lena Ortiz; her deposition is next month."* Send. **Reload the page** (fresh session, still logged in). Ask: *"Who's our lead expert and when's the deposition?"* → correct answer. Click **Recall trace**. |
-| **Say** | "I tell the Acme matter a fact… then start a brand-new session. It still knows — that fact became persistent memory, not chat history. The recall trace shows exactly which memory it pulled back." |
+| **On screen** | **Log in as → Acme — Litigation.** Type a **new** fact it doesn't already know: *"Note for the file: our lead paralegal on this matter is Marcus Bell, extension 4471."* Send; **wait ~2s** (memory is written after the reply). **Reload the page** (fresh session, still logged in). Ask: *"Who's our paralegal here and how do I reach them?"* → answers **Marcus Bell, ext 4471**. Click **Recall trace**. |
+| **Say** | "I tell the Acme matter a brand-new fact — our paralegal, Marcus Bell — then reload into a fresh session. It still knows, and gives me his extension. That became persistent memory, not chat history — and the recall trace shows exactly which memory it pulled back." |
 
 ### 1:18–1:52 — Isolation: the ethical wall ← **the money shot**
 | | |
@@ -85,8 +85,8 @@ middle, end back on the cockpit. Speak calmly — this is the "why".*
 ### 2:04–2:20 — Bounded recall at scale
 | | |
 |---|---|
-| **On screen** | Back in **Acme — Litigation** (115 memories). Ask: *"What discovery do we have on the supply-contract timeline?"* → **Recall trace**: funnel **64 retrieved → 6 into context**, with the token count. |
-| **Say** | "This matter holds over a hundred discovery memories. Watch the funnel — 64 retrieved, ranked by similarity, importance and recency, and only the **six** most relevant entered the context, under a token budget. The store grows forever; the prompt stays small." |
+| **On screen** | Back in **Acme — Litigation** (115 memories). Ask: *"What discovery do we have on the supply-contract timeline?"* → **Recall trace**: funnel **64 retrieved → a few (deduplicated) into context**, with the token count. |
+| **Say** | "This matter holds over a hundred discovery memories. Watch the funnel — 64 retrieved, ranked by similarity, importance and recency, and only the few most relevant (deduplicated) entered the context, under a token budget. The store grows forever; the prompt stays small." |
 
 ### 2:20–2:35 — Forgetting
 | | |
