@@ -13,6 +13,8 @@ isolation · forgetting · bounded recall) + human-in-the-loop, plus metadata-on
 
 ---
 
+**Prefer to talk naturally, no clock?** See [`demo-script-natural.md`](demo-script-natural.md).
+
 ## Pre-flight (before you hit record)
 
 - [ ] **Start the box** (it's kept stopped to avoid charges): `make infra-start` → same IP, ~1–2 min.
