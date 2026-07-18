@@ -155,6 +155,32 @@ model: [`CACHE-ISOLATION.md`](CACHE-ISOLATION.md).
 
 ## 4. The memory engine
 
+### 4.0 What "memory" actually is (context window vs. the store)
+
+A common misconception is that the model *remembers* things. It doesn't — an LLM is **stateless**:
+between two API calls it retains nothing. Two different things are at play:
+
+| | **Context window** | **Memory (the store)** |
+|---|---|---|
+| What | the tokens sent to the model on **one** request (system prompt + recent turns + injected facts) | a **durable** record of facts that survives across sessions |
+| Lifetime | **ephemeral** — gone when the response finishes | **persistent** — on disk until superseded/expired |
+| Measured in | tokens | database rows + vectors |
+| Analogy | your **desk** — limited, cleared after each task | your **filing cabinet** — searched, and the few relevant folders are pulled onto the desk |
+
+So the context window is *not* saved. What's saved is the **distilled facts**, and on each turn the
+engine **retrieves** the relevant ones and **injects them back into the context window** for that
+single call. "Memory" is the storage + retrieval + forgetting built *around* a stateless model.
+
+**Physically, each memory lives in two places at once**, linked by `qdrant_point_id`:
+
+- **PostgreSQL** (`memories` table) — the **text + metadata**: the sentence itself, its `kind`,
+  `salience`, `status`, timestamps, and the isolation `namespace`. This is the source of truth.
+- **Qdrant** — the **embedding**: a 1024-number vector (a "meaning fingerprint" from
+  `text-embedding-v4`, ~4 KB) that makes the memory findable by *meaning*, not keywords.
+
+Retrieval works on the vectors (semantic search); the answer text and metadata come from Postgres.
+The three paths below are how that store is written, read, and pruned.
+
 [`memory/engine.py`](../api/app/memory/engine.py) — three paths.
 
 ### 4.1 Write path (`write_memories`)
