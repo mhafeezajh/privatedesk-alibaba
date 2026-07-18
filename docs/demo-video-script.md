@@ -64,11 +64,17 @@ middle, end back on the cockpit. Speak calmly — this is the "why".*
 
 ## Part 2 — The use case  (1:00–3:15)
 
+> **When do I log out?** You **stay logged in as Acme** for the first three beats (Accumulation →
+> Bounded recall → Forgetting — all the same matter). You only **log out to switch identity**: for
+> Isolation (→ Borealis, then Demo mode), Oversight (→ Supervisor), and Healthcare (→ James).
+> The **recall trace is not a login thing** — it appears automatically whenever you send a chat
+> message, and the app switches to the Recall-trace tab for you.
+
 ### 1:00–1:18 — Accumulation
 | | |
 |---|---|
-| **On screen** | **Log in as → Acme — Litigation.** Type a **new** fact it doesn't already know: *"Note for the file: our lead paralegal on this matter is Marcus Bell, extension 4471."* Send; **wait ~2s** (memory is written after the reply). **Reload the page** (fresh session, still logged in). Ask: *"Who's our paralegal here and how do I reach them?"* → answers **Marcus Bell, ext 4471**. Click **Recall trace**. |
-| **Say** | "I tell the Acme matter a brand-new fact — our paralegal, Marcus Bell — then reload into a fresh session. It still knows, and gives me his extension. That became persistent memory, not chat history — and the recall trace shows exactly which memory it pulled back." |
+| **On screen** | **Log in as → Acme — Litigation.** ① Type a **new** fact: *"Note for the file: our lead paralegal is Marcus Bell, extension 4471."* Send, let the reply finish. ② Click the **Memory store** tab — the Marcus Bell memory is now a saved row (this confirms it persisted). ③ **Reload the page** (F5 — you stay logged in; this is a fresh session, **no logout**). ④ Ask: *"Who's our paralegal here and how do I reach them?"* → answers **Marcus Bell, ext 4471**, and the **Recall trace** tab opens on its own. |
+| **Say** | "I tell Acme a brand-new fact — our paralegal, Marcus Bell. It's now a stored memory, right here. I reload into a completely fresh session… and it still knows, down to the extension. The recall trace shows it pulled that exact memory back — persistent memory, not chat history." |
 
 ### 1:18–1:52 — Isolation: the ethical wall ← **the money shot**
 | | |

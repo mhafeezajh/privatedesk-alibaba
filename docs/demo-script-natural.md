@@ -46,15 +46,25 @@ approves*.
 
 ## Part 2 — The use case
 
+> **When to log out (read once):** stay logged in as **Acme** for the first three beats
+> (accumulation → bounded recall → forgetting). Only **log out to switch identity** — for the wall
+> (→ Borealis, → Demo), oversight (→ Supervisor), and healthcare (→ James). The recall trace is
+> **not** tied to login; it appears whenever you send a message.
+
 ### It remembers (accumulation)
-**Do:** Log in as **Acme — Litigation**. Tell it a **new** fact (one that isn't seeded): *"Note for
-the file: our lead paralegal on this matter is Marcus Bell, extension 4471."* Wait ~2 seconds, then
-**reload the page** (fresh session). Ask *"Who's our paralegal here and how do I reach them?"* → it
-answers **Marcus Bell, ext 4471**. Open the **Recall trace** tab.
+**Do:** Log in as **Acme — Litigation**.
+1. Tell it a **new** fact (not seeded): *"Note for the file: our lead paralegal is Marcus Bell,
+   extension 4471."* Let the reply finish.
+2. Click the **Memory store** tab — the Marcus Bell memory is now a saved row (proof it persisted;
+   also removes any timing guesswork).
+3. **Reload the page (F5)** — you stay logged in; **do not log out**. This is a fresh session.
+4. Ask *"Who's our paralegal here and how do I reach them?"* → it answers **Marcus Bell, ext 4471**,
+   and the **Recall trace** tab opens by itself.
+
 **Say:**
-> "I tell the Acme matter a brand-new fact — our paralegal, Marcus Bell — then start a fresh
-> session, and it still knows, right down to his extension. That became persistent memory, not chat
-> history. The trace shows exactly which memory it pulled back."
+> "I tell Acme a brand-new fact — our paralegal, Marcus Bell. It's a stored memory now, right here.
+> I reload into a completely fresh session… and it still knows, down to the extension. The trace
+> shows it pulled that exact memory back — persistent memory, not chat history."
 
 ### The wall — the important part (isolation)
 **Do:** Log out. Log in as **Borealis — Employment**. Ask the *same* question: *"What's Acme's
