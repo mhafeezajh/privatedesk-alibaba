@@ -1,7 +1,6 @@
 # Submission Packet — Qwen Cloud Global AI Hackathon
 
-Everything the submission form asks for, assembled in one place. Fill the three
-`⟨…⟩` placeholders (repo URL, demo video URL, proof video URL) once they exist.
+Everything the submission form asks for, assembled in one place. All URLs below are final.
 
 ---
 
@@ -62,6 +61,13 @@ human-in-the-loop approval gate, in a legal "ethical wall" scenario.
 > isn't about where the bytes live; it's **isolation, open weights, and never training on your
 > data** — and Qwen makes all three possible.
 >
+> **What Qwen powers** (not just "an LLM call"). `qwen-plus` — reasoning grounded in *this*
+> principal's recalled memory, plus the **structured-JSON** output that extracts memories, renders
+> the isolation-guard verdict, and drafts the human-in-the-loop actions; `qwen3-max` — flagship
+> marquee turns; `text-embedding-v4` (1024-d, multilingual) — the embeddings that make memory
+> recallable by *meaning*. The LLM prompt cache is partitioned per principal so a shared cache
+> can't leak across the wall.
+>
 > **Deployment.** One `terraform apply` stands up the whole stack on **Alibaba Cloud ECS**
 > (VPC, security group, EIP), ships the code, and seeds the demo — reachable, healthy, and
 > provably isolated.
@@ -110,7 +116,7 @@ seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.s
 
 **(b) Short proof-of-deployment recording** (separate from the demo video):
 
-- **URL:** ⟨PROOF_VIDEO_URL⟩
+- **URL:** https://youtu.be/erLKMc1akzI
 - **Script:** [`VIDEO-SCRIPT-ALIBABA-PROOF.md`](VIDEO-SCRIPT-ALIBABA-PROOF.md) (~60–90 s)
 - It shows the ECS console (running instance, Singapore region, public IP **47.236.30.110**),
   an SSH session with all containers up, and `/health` returning `"provider":"Qwen Cloud
@@ -120,7 +126,7 @@ seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.s
 
 ## 5. Demo video (~3 minutes, public)
 
-- **URL:** ⟨DEMO_VIDEO_URL⟩ (upload to **YouTube / Vimeo / Facebook**, set **public**)
+- **URL:** https://youtu.be/SHQ_RtlwLyA (YouTube, set **public**)
 - **Script:** [`demo-video-script.md`](demo-video-script.md) — shot-by-shot, timed to <3:00,
   built around the isolation "money shot."
 - Recorded against the **live Alibaba Cloud deployment** at http://47.236.30.110:3000.
@@ -142,8 +148,8 @@ seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.s
 - [ ] **Text description** — §2 above (paste into the form)
 - [ ] **Architecture diagram** — `docs/architecture.png` attached / linked
 - [ ] **Alibaba Cloud proof — code file link** — `api/app/llm/client.py` (+ `infra/terraform/`)
-- [ ] **Alibaba Cloud proof — short video** — ⟨PROOF_VIDEO_URL⟩
-- [ ] **Demo video (~3 min, public)** — ⟨DEMO_VIDEO_URL⟩
+- [ ] **Alibaba Cloud proof — short video** — https://youtu.be/erLKMc1akzI
+- [ ] **Demo video (~3 min, public)** — https://youtu.be/SHQ_RtlwLyA
 - [ ] **Track** — Track 1 (MemoryAgent)
 - [ ] Secrets verified **not** committed (`.secrets.env`, `*.tfstate`, `generated/` ignored)
 - [ ] `/health` on the live box returns `llm_ok: true` at recording time

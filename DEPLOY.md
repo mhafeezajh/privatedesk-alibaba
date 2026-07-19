@@ -10,8 +10,8 @@ make dev                    # builds, starts, waits for health, offers to seed
 Open http://localhost:3000. Health is at http://localhost:8000/health.
 
 ## Deploy to Alibaba Cloud ECS (automated)
-You still create the VM yourself (see the click-by-click in `docs/deploy-alibaba-runbook.html`):
-an Ubuntu 24.04 instance (2 vCPU / 8 GB), with a public IP, and a security group allowing
+You still create the VM yourself: an Ubuntu 24.04 instance (2 vCPU / 8 GB), with a public IP,
+and a security group allowing
 inbound **TCP 22 (your IP), 8000, and 3000**. Then, from your laptop:
 
 ```bash

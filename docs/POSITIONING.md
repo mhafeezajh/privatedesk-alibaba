@@ -41,6 +41,12 @@ answers one question those tools leave to you:
 miss — by partitioning it per principal (not crudely disabling it), closing a cross-principal
 timing side-channel. See [`CACHE-ISOLATION.md`](CACHE-ISOLATION.md).
 
+*Why Qwen specifically:* the reference build runs on **Qwen** — `qwen-plus` for reasoning and the
+**structured-JSON** extraction that turns conversation into memory and enforces the wall, `qwen3-max`
+for marquee turns, and `text-embedding-v4` (1024-d, multilingual) for semantic recall. Because Qwen
+also ships as **open weights (Qwen3)**, the *same* engine runs fully local and air-gapped — the
+sovereign story competitors on closed models simply can't tell.
+
 ---
 
 ## At a glance

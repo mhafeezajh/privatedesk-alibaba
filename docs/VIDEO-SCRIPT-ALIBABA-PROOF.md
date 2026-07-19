@@ -5,7 +5,9 @@ backend runs on Alibaba Cloud and calls Qwen Cloud. This is **not** the 3-minute
 factual and evidence-focused. Screen recording + optional voiceover.
 
 **Goal:** a judge watching this is convinced the app is genuinely deployed on Alibaba Cloud ECS,
-in Singapore, calling Qwen Cloud (DashScope) — not on your laptop.
+in Singapore, calling Qwen Cloud (DashScope) — not on your laptop — and hears **what Qwen is
+doing**: `qwen-plus` for reasoning and structured-JSON memory extraction, and `text-embedding-v4`
+for the semantic-memory embeddings.
 
 ---
 
@@ -77,7 +79,12 @@ Point at the output:
 
 | | |
 |---|---|
-| **Say** | "And `/health` does a real round-trip: one live completion and one live embedding against Qwen Cloud — DashScope — returning `llm_ok: true`. So the Alibaba-hosted backend is actively using Qwen Cloud's models." |
+| **Say** | "`/health` does a real round-trip on every call: one live **Qwen-Plus** completion and one live **text-embedding-v4** embedding against Qwen Cloud — DashScope — returning `llm_ok: true`. Those are the two Qwen capabilities the product is built on: **Qwen-Plus** does the reasoning and the *structured-JSON* extraction that turns a conversation into memory and enforces the wall, and **text-embedding-v4** turns each memory into a 1024-dimension vector so it's recalled by *meaning* — multilingual, and marquee turns use the flagship **Qwen3-Max**." |
+
+> **Qwen capabilities this backend uses** (worth naming on screen): `qwen-plus` — reasoning +
+> **structured JSON** for memory extraction, the isolation-guard verdict, and HITL action drafting;
+> `qwen3-max` — flagship marquee turns; `text-embedding-v4` — 1024-d **multilingual embeddings** for
+> semantic recall. Prompt caching is partitioned per principal.
 
 ### Shot 5 (1:15–1:30) — The code that uses Alibaba Cloud (tie to repo)
 | | |

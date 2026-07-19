@@ -1,7 +1,6 @@
 # PrivateDesk MemoryAgent — Technical Architecture
 
-How the system is built and how each component works. Companion to
-[`DEMO-WALKTHROUGH.md`](DEMO-WALKTHROUGH.md).
+How the system is built and how each component works.
 
 ---
 
@@ -13,6 +12,10 @@ reachable by another's. The wall between principals is enforced in the **retriev
 merely asked for in a prompt — is bound to a **logged-in identity** (§3.5), extends to the **LLM
 prompt cache** (§3.6), and is covered by a guard test. The same code runs against **Qwen Cloud
 (DashScope)** or a **local Ollama** open-weight model, selected by a single environment variable.
+In the reference (cloud) build the engine is powered by **Qwen**: `qwen-plus` for reasoning and
+**structured-JSON** extraction, `qwen3-max` for marquee turns, and `text-embedding-v4` (1024-d,
+multilingual) for semantic recall — all served over DashScope's OpenAI-compatible endpoint in
+Singapore (capabilities detailed in §6.3).
 
 **Two domains ship on the identical engine**, chosen at the login screen — swapping is *data, not
 code* (`_SCENARIOS` in [`routers/demo.py`](../api/app/routers/demo.py)):
@@ -307,6 +310,19 @@ change, not a code change:
 - `complete` / `complete_json` / `stream` — the only places model calls happen.
 - `_with_retry` — exponential backoff on `429/5xx` (4 attempts).
 - `_clean_model` strips the `dashscope/` or `ollama/` prefix for the OpenAI-compatible route.
+
+**Qwen Cloud capabilities we rely on — and where each is exercised.** Every capability below is
+reached through exactly those three functions; nothing calls the provider directly.
+
+| Qwen capability | Model | Where it's used |
+|---|---|---|
+| **Reasoning grounded in retrieved context** | `qwen-plus` | Every chat turn — the reply is constrained to *this* principal's recalled memory (`stream`, §5) |
+| **Structured JSON output** | `qwen-plus` | Memory **extraction**, the **isolation-guard** verdict, and **HITL** action drafting — all via `complete_json` (§4.1, §5) |
+| **Token streaming** | `qwen-plus` | Live SSE token stream to the cockpit (`stream`) |
+| **Flagship tier** | `qwen3-max` | Marquee/headline turns (`headline=True`) when maximum quality matters |
+| **Multilingual, high-dim embeddings** | `text-embedding-v4` (1024-d) | Semantic recall — the "meaning fingerprint" that finds memories by meaning, not keywords (§4.2, §6.4) |
+| **Prompt caching** | DashScope | Partitioned per principal so a shared cache can't become a cross-principal side-channel (§3.6) |
+| **OpenAI-compatible API** | DashScope intl (Singapore) | One env var re-targets the *same* code at Qwen Cloud or local Ollama (§8) |
 
 ### 6.4 embeddings
 [`memory/embeddings.py`](../api/app/memory/embeddings.py) — `text-embedding-v4` (1024-d) via the

@@ -163,8 +163,6 @@ make infra-up                   # terraform apply → prints the live app_url / 
 make infra-down                 # tear it all down
 ```
 
-**Walkthrough for a demo:** [`docs/DEMO-WALKTHROUGH.md`](docs/DEMO-WALKTHROUGH.md).
-
 ---
 
 ## The isolation guarantee (and how to verify it)
@@ -229,8 +227,7 @@ docs/       architecture diagram + deep-dive docs (below)
 |---|---|
 | [`docs/TECHNICAL-ARCHITECTURE.md`](docs/TECHNICAL-ARCHITECTURE.md) | How every component works, the isolation model, the request lifecycle |
 | [`docs/CACHE-ISOLATION.md`](docs/CACHE-ISOLATION.md) | Threat model + fix for the shared LLM prompt-cache side-channel (partition, don't disable) |
-| [`docs/DEMO-WALKTHROUGH.md`](docs/DEMO-WALKTHROUGH.md) | Click-by-click demo of all five behaviors (login-first flow) |
-| [`docs/demo-script-natural.md`](docs/demo-script-natural.md) | Untimed talk-through demo script — narrate it naturally |
+| [`docs/demo-video-script.md`](docs/demo-video-script.md) | Shot-by-shot demo script, timed to <3:00 |
 | [`docs/TEST-CASES.md`](docs/TEST-CASES.md) | Full test plan — automated (`make smoke` / `make evals` / pytest) + manual UI cases |
 | [`docs/FUNCTIONAL-TEST-CASES.md`](docs/FUNCTIONAL-TEST-CASES.md) | Plain-English UAT for business users — no jargon, click-by-click, with a results sheet |
 | [`docs/POSITIONING.md`](docs/POSITIONING.md) | How PrivateDesk differs from Bedrock / OpenAI / DIY / Mem0-Zep — talking points & FAQ |

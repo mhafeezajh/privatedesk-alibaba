@@ -14,9 +14,8 @@ isolation · forgetting · bounded recall) + human-in-the-loop, plus metadata-on
 
 ---
 
-**Prefer to talk naturally, no clock?** See [`demo-script-natural.md`](demo-script-natural.md).
 *(Prefer to lead with the legal ethical-wall story instead? The same beats work — swap Maria→Acme,
-James→Borealis, "HIV status"→"settlement ceiling"; details in [`DEMO-WALKTHROUGH.md`](DEMO-WALKTHROUGH.md).)*
+James→Borealis, "HIV status"→"settlement ceiling".)*
 
 ## Pre-flight (before you hit record)
 
