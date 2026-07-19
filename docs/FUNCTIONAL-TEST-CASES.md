@@ -9,7 +9,7 @@ Every step is something you click or type in a normal web browser.
 - **How long:** about 20–30 minutes for all cases.
 - **What you need:** a web browser and the app link below.
 
-> **App link:** **http://47.236.30.110:3000**
+> **App link:** **http://localhost:3000** (or your deployment's `http://<host>:3000`)
 
 ---
 
@@ -45,7 +45,7 @@ Each case below has the same shape:
 
 ## Setup (do this once, ~1 minute)
 
-1. Open **http://47.236.30.110:3000** in your browser. You'll see a **sign-in screen**.
+1. Open **http://localhost:3000** in your browser. You'll see a **sign-in screen**.
 2. At the top, make sure the domain toggle is set to **"Legal — matters."**
 3. Click **"Load matters demo data."** Wait a few seconds. A list of three matters appears:
    *Acme Corp v. Borealis — Litigation*, *Borealis Ltd — Employment Counsel*, *Vertex / Nimbus — M&A*.

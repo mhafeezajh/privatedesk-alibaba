@@ -25,7 +25,7 @@ Coverage summary:
 | `evals/run_evals.py` | TC-B1, TC-I1, TC-R1, TC-F1, TC-H1 | non-zero on isolation leak or score < 80 |
 | `tests/test_isolation.py` | TC-I3 (chokepoint) | pytest assertion |
 
-Live target used in examples: `http://47.236.30.110:8000` (API) / `:3000` (web).
+Target used in examples: `http://localhost:8000` (API) / `:3000` (web) — or your deployment's `http://<host>:…`.
 
 ---
 
