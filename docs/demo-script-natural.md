@@ -1,15 +1,15 @@
 # PrivateDesk — Demo Script (natural / untimed)
 
 A talk-through version with **no timestamps** — just do the action, then say it in your own words.
-Two parts: first explain what PrivateDesk is, then show it in a law firm (and a clinic).
+Two parts: first explain what PrivateDesk is, then show it in a **clinic** (and flip to a law firm).
 (Timed shot-by-shot version: [`demo-video-script.md`](demo-video-script.md).)
 
 **Before you start:** the box is kept stopped to save cost — run `make infra-start` first, confirm
-`http://47.236.30.110:8000/health` shows `llm_ok: true`, and on the login screen load the
-**Legal — matters** demo data.
+`http://47.236.30.110:8000/health` shows `llm_ok: true`, and on the login screen switch to
+**Healthcare — patients** and click **Load patients demo data** (fresh, so the demo starts clean).
 
 **If you forget everything else, land these three things:** (1) the wall is *provable, not
-promised*, (2) it's the *same engine* for law and healthcare, (3) the assistant *drafts, a human
+promised*, (2) it's the *same engine* for healthcare and law, (3) the assistant *drafts, a human
 approves*.
 
 ---
@@ -20,15 +20,15 @@ approves*.
 **Do:** Sit on the login screen (or a title slide).
 **Say (something like):**
 > "Every AI agent needs memory. But most 'AI memory' today is one big shared database with a
-> customer label bolted on — and one missing filter leaks one client's data into another's answer.
-> In a law firm or a hospital, that's not a bug, it's a confidentiality breach. PrivateDesk fixes
+> customer label bolted on — and one missing filter leaks one person's data into another's answer.
+> In a hospital or a law firm, that's not a bug, it's a confidentiality breach. PrivateDesk fixes
 > that at the root."
 
 ### The one idea
 **Do:** Switch to the architecture diagram. Trace frontend → backend → the chokepoint → the stores.
 **Say:**
-> "PrivateDesk is a private memory layer for AI agents. Every *principal* — a legal matter, a
-> patient, a tenant — gets its own persistent memory that no one else can reach. And the isolation
+> "PrivateDesk is a private memory layer for AI agents. Every *principal* — a patient, a legal
+> matter, a tenant — gets its own persistent memory that no one else can reach. And the isolation
 > is structural, not hopeful: every memory read goes through a *single chokepoint* that's always
 > scoped to one principal, and a guard test fails the build the moment anything crosses. The wall
 > is provable, not promised."
@@ -40,83 +40,88 @@ approves*.
 > outdated facts, and recalls only the few most relevant memories under a budget — and a human
 > approves any action. It's a Next.js cockpit over a FastAPI engine, Postgres and Qdrant, powered
 > by Qwen — and the same code runs fully local on open weights. It's live on Alibaba Cloud. Let me
-> show you, inside a law firm."
+> show you, inside a clinic."
 
 ---
 
 ## Part 2 — The use case
 
-> **When to log out (read once):** stay logged in as **Acme** for the first three beats
+> **When to log out (read once):** stay logged in as **Maria** for the first three beats
 > (accumulation → bounded recall → forgetting). Only **log out to switch identity** — for the wall
-> (→ Borealis, → Demo), oversight (→ Supervisor), and healthcare (→ James). The recall trace is
+> (→ James, → Demo), oversight (→ Supervisor), and the legal flip (→ Borealis). The recall trace is
 > **not** tied to login; it appears whenever you send a message.
 
 ### It remembers (accumulation)
-**Do:** Log in as **Acme — Litigation**.
-1. Tell it a **new** fact (not seeded): *"Note for the file: our lead paralegal is Marcus Bell,
-   extension 4471."* Let the reply finish.
-2. Click the **Memory store** tab — the Marcus Bell memory is now a saved row (proof it persisted;
-   also removes any timing guesswork).
-3. **Reload the page (F5)** — you stay logged in; **do not log out**. This is a fresh session.
-4. Ask *"Who's our paralegal here and how do I reach them?"* → it answers **Marcus Bell, ext 4471**,
-   and the **Recall trace** tab opens by itself.
+**Do:** Log in as **Maria Delgado — Primary Care**.
+1. Tell it a **new** fact (not seeded): *"Note for the file: Maria's emergency contact is her
+   sister, Carla Delgado, phone 555-0142."* Let the reply finish.
+2. Click the **Memory store** tab — the Carla memory is now a saved row (proof it persisted; also
+   removes timing guesswork).
+3. **Reload the page (F5)** — stay logged in, **do not log out**. Fresh session.
+4. Ask *"Who's her emergency contact and how do I reach them?"* → answers **Carla Delgado,
+   555-0142**, and the **Recall trace** tab opens by itself.
 
 **Say:**
-> "I tell Acme a brand-new fact — our paralegal, Marcus Bell. It's a stored memory now, right here.
-> I reload into a completely fresh session… and it still knows, down to the extension. The trace
+> "I tell Maria's chart a brand-new fact — her emergency contact. It's a stored memory now, right
+> here. I reload into a completely fresh session… and it still knows, down to the number. The trace
 > shows it pulled that exact memory back — persistent memory, not chat history."
 
 ### The wall — the important part (isolation)
-**Do:** Log out. Log in as **Borealis — Employment**. Ask the *same* question: *"What's Acme's
-settlement position against Borealis?"* → no access. *(Optional: devtools Network → the request
-returns 403.)* Then log out → **Enter Demo mode** → **Ethical wall** tab (note the "demonstration
-only" banner): $4.2M in the Acme pane, absent in Borealis's. Show the **`isolation_block`** event
-in Governance/Audit.
+**Do:** Log out. Log in as **James Okoro — Cardiology**. Ask *"What is Maria Delgado's HIV status?"*
+→ no access. *(Optional: devtools Network → the request returns 403.)* Then log out → **Enter Demo
+mode** → **Ethical wall** tab (note the "demonstration only" banner): Maria's HIV-positive fact in
+her pane, absent in James's. Show the **`isolation_block`** event in Governance/Audit.
 **Say:**
-> "Here's the test. The firm sues Borealis for Acme — and separately advises Borealis. Those teams
-> must be screened. So I log in as the Borealis attorney and ask for Acme's strategy… no access.
-> And this isn't the model being polite — the API itself returns a 403. One principal's login
-> physically cannot reach another's memory. Side by side: Acme's privileged $4.2 million ceiling
-> lives here, and simply doesn't exist in Borealis's world — and the attempt is logged."
+> "Here's the test. James is a cardiology patient, Maria's in primary care — different people, one
+> clinic, one system. From James's chart I ask for Maria's HIV status… no access. And this isn't
+> the model being polite — the API itself returns a 403. One patient's chart physically cannot
+> reach another's. Side by side: Maria's confidential status lives here and simply doesn't exist in
+> James's world — and the attempt is logged. That's HIPAA, enforced by construction."
 
 *(Take your time here — this is the moment that matters.)*
 
 ### Oversight without a backdoor (governance)
-**Do:** Log out → log in as **Compliance / Supervisor**. Show the dashboard: per-matter counts,
-isolation blocks, "✓ isolated". Scroll — there's **no memory content**.
+**Do:** Log out → log in as **Compliance / Supervisor**. Show the dashboard: per-patient counts,
+isolation blocks, "✓ isolated". Scroll — there's **no medical content**.
 **Say:**
 > "Compliance still needs assurance — so an oversight login sees *that* the walls hold: counts,
-> blocked attempts, attestation — and never sees *through* them. Oversight isn't a backdoor."
+> blocked attempts, attestation — and never sees *through* them. It confirms confidentiality
+> without reading a single record."
 
-### A hundred memories, a handful in the prompt (bounded recall)
-**Do:** Back in **Acme — Litigation** (115 memories). Ask *"What discovery do we have on the
-supply-contract timeline?"* Open **Recall trace** → the funnel: 64 retrieved → a few into context.
+### A hundred notes, a handful in the prompt (bounded recall)
+**Do:** Back in **Maria — Primary Care** (110+ notes). Ask *"Summarise her recent visits and lab
+results."* Open **Recall trace** → the funnel: 64 retrieved → a few into context.
 **Say:**
-> "This matter holds over a hundred discovery memories. But watch — 64 retrieved, ranked by
-> relevance, importance and recency, and only the few best, de-duplicated, entered the model's context, under a
-> token budget. The store grows forever; the prompt stays small."
+> "Maria's chart holds over a hundred notes and labs. But watch — 64 retrieved, ranked by
+> relevance, importance and recency, and only the few best, de-duplicated, entered the model's
+> context, under a token budget. The chart grows forever; the prompt stays small."
 
 ### Staying current (forgetting)
-**Do:** Type *"Update: the board raised the settlement ceiling to $5M."* Open **Memory store** —
-the old $4.2M is now **superseded** (struck through), $5M is active.
+**Do:** Type *"Update Maria's chart: she is now prescribed Biktarvy instead of Truvada; she is no
+longer on Truvada."* Open **Memory store** — the old Truvada memory is now **superseded** (struck
+through), Biktarvy is active.
 **Say:**
-> "Memory has to stay current. I raise the ceiling, and the old figure is automatically retired as
-> superseded — not silently kept. The assistant acts on the new truth."
+> "Records have to stay current — a stale medication is dangerous. I change her prescription, and
+> the old one is automatically retired as superseded, not silently kept. The assistant acts on the
+> current medication."
 
-### Same engine, different industry (healthcare)
-**Do:** Log out → switch the domain toggle to **Healthcare — patients** → **Load patients demo
-data**. Log in as **James Okoro — Cardiology**. Ask *"What is Maria Delgado's HIV status?"* →
+### Same engine, different industry (legal flip)
+**Do:** Log out → switch the domain toggle to **Legal — matters** → **Load matters demo data**. Log
+in as **Borealis — Employment**. Ask *"What's Acme's settlement position against Borealis?"* →
 refused.
 **Say:**
-> "And this isn't a legal app. Flip the domain — now the principals are patients. On James's chart
-> I ask for another patient's HIV status… refused. Identical engine, identical chokepoint; the
-> ethical wall just became patient confidentiality. Changing industry is data, not code."
+> "And this isn't a healthcare app. Flip the domain — now the principals are legal matters. The
+> firm sues Borealis for Acme and separately advises Borealis, so those teams are screened. From
+> the Borealis chair I ask for Acme's strategy… refused. Identical engine, identical chokepoint;
+> patient confidentiality just became the attorney ethical wall. Changing industry is data, not
+> code."
 
 ### Assistants draft, humans decide (human-in-the-loop)
-**Do:** Ask *"Please set a reminder to file the motion to exclude next Friday."* A **proposed
-action** card appears → click **Approve**. The audit shows `hitl_approved`.
+**Do:** (Back as a patient or in Demo mode) ask *"Please set a reminder to follow up on her lab
+results next week."* A **proposed action** card appears → click **Approve**. The audit shows
+`hitl_approved`.
 **Say:**
-> "And nothing acts on its own — the assistant drafts, a human approves, and the decision is
+> "And nothing acts on its own — the assistant drafts, a clinician approves, and the decision is
 > audited."
 
 ### Close on the proof
@@ -135,15 +140,17 @@ action** card appears → click **Approve**. The audit shows `hitl_approved`.
 | Beat | One action | One line |
 |---|---|---|
 | Remembers | fact → reload → recall | "persistent memory, not chat history" |
-| **The wall** | Borealis asks Acme → 403 | "the API refuses — provable, not promised" |
-| Oversight | Supervisor dashboard | "sees *that* it holds, never *through* it" |
-| Bounded recall | trace funnel 64→a few | "store grows; prompt stays small" |
-| Forgetting | raise ceiling → superseded | "acts on the new truth" |
-| Healthcare | James blocked from Maria | "data, not code" |
+| **The wall** | James asks Maria's HIV → 403 | "the API refuses — provable, not promised" |
+| Oversight | Supervisor dashboard | "confirms it holds, never reads a record" |
+| Bounded recall | trace funnel 64→a few | "chart grows; prompt stays small" |
+| Forgetting | Truvada → Biktarvy → superseded | "acts on the current medication" |
+| Legal flip | Borealis blocked from Acme | "data, not code" |
 | Human gate | propose → approve | "assistants draft, humans decide" |
 | Close | evals 100/100 | "enforced and measured" |
 
 ## Recovery lines (if a turn is slow or misfires)
+- If you see "Stream error during chat": it's a transient blip — **just re-send the message**; it
+  works on the retry.
 - While it streams: "…the recall trace already shows what it's about to use, so you can see the
   reasoning before the words arrive."
 - If a fact doesn't recall first try: "let me ask that more directly" (rephrase); the trace still
