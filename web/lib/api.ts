@@ -22,6 +22,11 @@ export type RecallTrace = {
 
 export type AuditRow = { event_type: string; detail: Record<string, unknown>; created_at: string };
 
+export type PromptRow = {
+  member_id: string; kind: string; model: string; base_url: string;
+  provider: string; messages: { role: string; content: string }[]; created_at: string;
+};
+
 export type GovReport = {
   principal: { name: string; role: string; persona: string; namespace: string };
   generated_at: string;
@@ -96,6 +101,7 @@ export const api = {
   startSession: (member_id: string) => j<{ session_id: string }>("/api/session/start", { method: "POST", body: JSON.stringify({ member_id }) }),
   memories: (member_id: string) => j<MemoryRow[]>(`/api/inspector/memories?member_id=${member_id}`),
   audit: (member_id: string) => j<AuditRow[]>(`/api/inspector/audit?member_id=${member_id}`),
+  prompts: (member_id: string) => j<PromptRow[]>(`/api/inspector/prompts?member_id=${member_id}`),
   maintenance: (member_id: string) => j<{ expired: number; pruned: number }>(`/api/inspector/maintenance?member_id=${member_id}`, { method: "POST" }),
   report: (member_id: string) => j<GovReport>(`/api/inspector/report?member_id=${member_id}`),
   pending: (member_id: string) => j<PendingAction[]>(`/api/actions/pending?member_id=${member_id}`),

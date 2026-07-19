@@ -10,8 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import auth
 from app.audit import record
+from app.config import get_settings
 from app.db import Memory, Message, ProposedAction, Session, SessionLocal, get_session
-from app.llm import cache_isolation, client, prompts
+from app.llm import cache_isolation, client, prompt_tap, prompts
 from app.memory import engine
 from app.personas import get_persona
 from app.routers.members import require_member
@@ -73,6 +74,12 @@ async def chat(body: ChatIn, db: AsyncSession = Depends(get_session),
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": body.message if not history else f"{history}\nuser: {body.message}"},
     ]
+
+    # Tap the exact payload we're about to send to the provider so the inspector can
+    # show it (auth-scoped to this principal). This IS what goes on the wire to Qwen.
+    _s = get_settings()
+    prompt_tap.record(str(member.id), kind="chat completion", model=_s.reasoning_model,
+                      base_url=_s.llm_base_url, provider=_s.provider_label, messages=messages)
 
     async def gen():
         # surface the recall trace first so the inspector can show bounded recall

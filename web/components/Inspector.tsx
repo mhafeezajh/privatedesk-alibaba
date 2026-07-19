@@ -1,5 +1,11 @@
 "use client";
-import type { AuditRow, MemoryRow, RecallTrace } from "@/lib/api";
+import type { AuditRow, MemoryRow, PromptRow, RecallTrace } from "@/lib/api";
+
+const roleStyle: Record<string, string> = {
+  system: "text-amber-300",
+  user: "text-sky-300",
+  assistant: "text-emerald-300",
+};
 
 const statusStyle: Record<string, string> = {
   active: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -24,15 +30,16 @@ const auditStyle: Record<string, string> = {
   hitl_rejected: "text-slate-600",
 };
 
-export type Tab = "memory" | "trace" | "audit";
+export type Tab = "memory" | "trace" | "audit" | "prompts";
 
 export default function Inspector({
-  tab, memories, trace, audit, onMaintenance, maintenanceMsg,
+  tab, memories, trace, audit, prompts, onMaintenance, maintenanceMsg,
 }: {
   tab: Tab;
   memories: MemoryRow[];
   trace: RecallTrace | null;
   audit: AuditRow[];
+  prompts: PromptRow[];
   onMaintenance: () => void;
   maintenanceMsg: string | null;
 }) {
@@ -103,6 +110,41 @@ export default function Inspector({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "prompts" && (
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Prompts sent to {prompts[0]?.provider || "the model provider"}
+          </span>
+          <p className="mt-1 text-[11px] text-slate-400">
+            The literal payload this backend put on the wire — system persona + recalled memory + the user turn.
+          </p>
+          {prompts.length === 0 ? (
+            <p className="mt-3 text-sm text-slate-400">No prompts yet. Send a message to produce one.</p>
+          ) : (
+            <div className="mt-3 space-y-3">
+              {prompts.map((p, i) => (
+                <div key={i} className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-slate-700 px-3 py-2 font-mono text-[10px] text-slate-400">
+                    <span className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-200">{p.kind}</span>
+                    <span>model: <span className="text-emerald-300">{p.model}</span></span>
+                    <span className="truncate">POST <span className="text-sky-300">{p.base_url}</span></span>
+                    <span className="ml-auto">{new Date(p.created_at).toLocaleTimeString()}</span>
+                  </div>
+                  <div className="space-y-2 p-3">
+                    {p.messages.map((m, j) => (
+                      <div key={j}>
+                        <div className={`font-mono text-[10px] font-semibold uppercase ${roleStyle[m.role] || "text-slate-400"}`}>{m.role}</div>
+                        <pre className="mt-0.5 whitespace-pre-wrap break-words font-mono text-[11px] leading-snug text-slate-100">{m.content}</pre>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

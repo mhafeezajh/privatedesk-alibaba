@@ -9,10 +9,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import auth
 from app.db import AuditLog, Member, Memory, ProposedAction, get_session
+from app.llm import prompt_tap
 from app.memory import engine
 from app.routers.members import require_member
 
 router = APIRouter(prefix="/api/inspector", tags=["inspector"])
+
+
+@router.get("/prompts")
+async def prompts_sent(member_id: str, db: AsyncSession = Depends(get_session),
+                       ident: dict = Depends(auth.require_identity)):
+    auth.authorize_content(ident, member_id)  # content — this principal's own prompts only
+    await require_member(member_id, db)
+    return prompt_tap.recent(member_id)
 
 
 @router.get("/memories")

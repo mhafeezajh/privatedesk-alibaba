@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { api, streamChat, storeIdentity, loadStoredIdentity, type AuditRow, type Identity, type Member, type MemoryRow, type PendingAction, type RecallTrace } from "@/lib/api";
+import { api, streamChat, storeIdentity, loadStoredIdentity, type AuditRow, type Identity, type Member, type MemoryRow, type PendingAction, type PromptRow, type RecallTrace } from "@/lib/api";
 import Chat from "@/components/Chat";
 import Inspector, { type Tab } from "@/components/Inspector";
 import IsolationView from "@/components/IsolationView";
@@ -72,14 +72,15 @@ function Cockpit({ identity, onLogout }: { identity: Identity; onLogout: () => v
   const [trace, setTrace] = useState<RecallTrace | null>(null);
   const [memories, setMemories] = useState<MemoryRow[]>([]);
   const [audit, setAudit] = useState<AuditRow[]>([]);
+  const [prompts, setPrompts] = useState<PromptRow[]>([]);
   const [pending, setPending] = useState<PendingAction[]>([]);
   const [view, setView] = useState<RightView>("memory");
   const [maintMsg, setMaintMsg] = useState<string | null>(null);
   const [banner, setBanner] = useState<string | null>(null);
 
   const refreshInspector = useCallback(async (m: Member) => {
-    const [mem, aud, pend] = await Promise.all([api.memories(m.id), api.audit(m.id), api.pending(m.id)]);
-    setMemories(mem); setAudit(aud); setPending(pend);
+    const [mem, aud, prm, pend] = await Promise.all([api.memories(m.id), api.audit(m.id), api.prompts(m.id), api.pending(m.id)]);
+    setMemories(mem); setAudit(aud); setPrompts(prm); setPending(pend);
   }, []);
 
   const selectMember = useCallback(async (m: Member) => {
@@ -142,6 +143,7 @@ function Cockpit({ identity, onLogout }: { identity: Identity; onLogout: () => v
   const tabs: { id: RightView; label: string }[] = [
     { id: "memory", label: "Memory store" },
     { id: "trace", label: "Recall trace" },
+    { id: "prompts", label: "Prompts → Qwen" },
     { id: "audit", label: "Audit log" },
     ...(isDemo ? [{ id: "isolation" as RightView, label: "Ethical wall" }] : []),
     { id: "governance", label: "Governance" },
@@ -203,7 +205,7 @@ function Cockpit({ identity, onLogout }: { identity: Identity; onLogout: () => v
               ? <IsolationView members={members} />
               : view === "governance"
               ? <GovernanceView member={selected} />
-              : <Inspector tab={view} memories={memories} trace={trace} audit={audit} onMaintenance={maintenance} maintenanceMsg={maintMsg} />}
+              : <Inspector tab={view} memories={memories} trace={trace} audit={audit} prompts={prompts} onMaintenance={maintenance} maintenanceMsg={maintMsg} />}
           </div>
         </div>
       </div>
