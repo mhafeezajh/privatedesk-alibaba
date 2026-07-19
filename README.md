@@ -26,8 +26,9 @@ runs on **Qwen Cloud (DashScope)** *or* fully local on **open-weight Qwen3 via O
 privacy isn't about *where the bytes live*. It's three things: **isolation, open weights, and
 never training on your data.** Qwen makes all three possible.
 
-> **Live demo:** http://47.236.30.110:3000 · **Health:** http://47.236.30.110:8000/health
-> (deployed on Alibaba Cloud ECS, Singapore — see [`docs/SUBMISSION.md`](docs/SUBMISSION.md))
+> **Deployed on Alibaba Cloud ECS** (Singapore) — see the proof-of-deployment video and
+> reproduce the whole stack from this repo with one command. Details in
+> [`docs/SUBMISSION.md`](docs/SUBMISSION.md).
 
 ---
 

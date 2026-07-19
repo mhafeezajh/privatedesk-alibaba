@@ -129,7 +129,8 @@ seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.s
 - **URL:** https://youtu.be/SHQ_RtlwLyA (YouTube, set **public**)
 - **Script:** [`demo-video-script.md`](demo-video-script.md) — shot-by-shot, timed to <3:00,
   built around the isolation "money shot."
-- Recorded against the **live Alibaba Cloud deployment** at http://47.236.30.110:3000.
+- Recorded against the real Alibaba Cloud ECS deployment (Singapore); the proof video (§4) is
+  the standing evidence it ran there.
 
 ---
 
@@ -152,31 +153,20 @@ seam out to **Qwen Cloud (DashScope)** or local Ollama. Source: [`architecture.s
 - [ ] **Demo video (~3 min, public)** — https://youtu.be/SHQ_RtlwLyA
 - [ ] **Track** — Track 1 (MemoryAgent)
 - [ ] Secrets verified **not** committed (`.secrets.env`, `*.tfstate`, `generated/` ignored)
-- [ ] `/health` on the live box returns `llm_ok: true` at recording time
+- [ ] `/health` returned `llm_ok: true` at video-recording time
 - [ ] (Optional) Blog post — ⟨BLOG_URL⟩
 
 ---
 
-## Live endpoints (as deployed)
+## Deployment
 
-| | |
-|---|---|
-| App | http://47.236.30.110:3000 |
-| Health | http://47.236.30.110:8000/health |
-| Region / instance | Alibaba Cloud `ap-southeast-1` (Singapore) · `ecs.u1-c1m4.large` (2 vCPU / 8 GB) |
-| Isolation proof | `ssh -i infra/terraform/generated/privatedesk.pem root@47.236.30.110 'cd privatedesk-memoryagent && docker compose exec -T api pytest -q tests/test_isolation.py'` |
+The backend was deployed to **Alibaba Cloud ECS** in Singapore (`ap-southeast-1`,
+`ecs.u1-c1m4.large` · 2 vCPU / 8 GB). The **proof-of-deployment video** (§4) is the standing
+evidence: the ECS console, all containers up, and `/health` returning
+`"provider":"Qwen Cloud (DashScope)","llm_ok":true`.
 
-> ## ⚠️ The box is currently STOPPED (to stop pay-as-you-go charges)
->
-> The ECS instance is stopped in StopCharging mode, so **the URLs above will not respond right
-> now**. This is deliberate cost control — but it means:
->
-> 1. **Before recording either video**, run `make infra-start` (boots at the *same* IP in ~1–2 min;
->    the app auto-restarts). Verify `/health` → `"llm_ok": true`, then record.
-> 2. **Before you submit / while judging is open**, run `make infra-start` and **leave it running**
->    — a judge clicking a dead link is a lost submission. At ~$0.10/hr (2 vCPU/8 GB) a week of
->    judging is only a few dollars.
-> 3. `make infra-stop` when idle; `make infra-down` to destroy everything once judging closes.
->
-> If you'd rather not depend on a live box at all, the **videos + repo are self-sufficient** —
-> the live URL is a bonus, not a requirement of the rules.
+There is intentionally **no live public URL** in this submission — the instance is kept stopped
+for cost control, and the **videos + repo are fully self-sufficient** (the live URL was always a
+bonus, not a rules requirement). The whole stack — including the `tests/test_isolation.py` guard
+test — reproduces from the repo with one command (`make infra-up`), and can be brought back up at
+the same IP in ~1–2 min (`make infra-start`) on request during judging.
